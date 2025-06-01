@@ -5,18 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@greatsumini/react-facebook-login": "^3.4.0",
     "@heroicons/react": "^2.2.0",
+    "@mui/icons-material": "^7.0.2",
+    "@mui/material": "^7.0.2",
     "@paypal/react-paypal-js": "^8.8.3",
+    "@react-google-maps/api": "^2.20.6",
     "@react-oauth/google": "^0.12.1",
     "@react-three/drei": "^10.0.7",
     "@react-three/fiber": "^9.1.2",
     "@reduxjs/toolkit": "^2.6.1",
+    "antd": "^5.24.6",
     "apexcharts": "^4.5.0",
     "axios": "^1.8.3",
     "clsx": "^2.1.1",
@@ -27,7 +33,9 @@
     "react": "^19.0.0",
     "react-apexcharts": "^1.7.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.55.0",
     "react-icons": "^5.5.0",
+    "react-leaflet": "^5.0.0",
     "react-multi-carousel": "^2.8.6",
     "react-quill-new": "^3.4.6",
     "react-redux": "^9.2.0",
@@ -39,15 +47,7 @@
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.1",
     "three": "^0.162.0",
-    "yet-another-react-lightbox": "^3.23.0",
-    "react-hook-form": "^7.55.0",
-    "react-leaflet": "^5.0.0",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^7.0.2",
-    "@mui/material": "^7.0.2",
-    "@react-google-maps/api": "^2.20.6",
-    "antd": "^5.24.6"
+    "yet-another-react-lightbox": "^3.23.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -60,6 +60,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
     "postcss": "^8.5.3",
+    "rollup-plugin-visualizer": "^6.0.1",
     "tailwindcss": "^3.4.17",
     "vite": "^6.2.0"
   }
