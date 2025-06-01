@@ -13,6 +13,8 @@ import HotelDetails from "../pages/Admin/HotelDetails";
 import TourDetailsAdmin from "../pages/Admin/TourDetailsAdmin";
 import UpdateHotel from "../pages/Admin/UpdateHotel";
 import AdminChat from '../pages/Admin/AdminChat'
+import TourBooking from "../pages/Admin/TourBooking";
+import HotelBooking from "../pages/Admin/HotelBooking";
 
 const AdminRoutes = () => {
     return (
@@ -47,6 +49,9 @@ const AdminRoutes = () => {
 
                     <Route path="manage-city" element={<ManageCity />} />
                     <Route path="create-city" element={<CreateCity />} />
+
+                    <Route path="booking/tour" element={<TourBooking/>} />
+                    <Route path="booking/hotel" element={<HotelBooking/>} />
                 </Route>
             </Route>
         </Routes>

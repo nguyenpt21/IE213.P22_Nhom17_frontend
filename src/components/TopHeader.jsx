@@ -1,20 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BsSearch } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import UserDropdown from "./UserDropdown";
 import { logout } from "../redux/features/authSlice";
+
 const TopHeader = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef(null);
 
     const { user } = useSelector((state) => state.auth);
+
+    // Handle click outside to close dropdown
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         dispatch(logout());
         navigate("/");
     };
+
     return (
         <header className="top-0 sticky bg-white border-b z-50">
             <div className="container mx-auto flex items-center py-2">
@@ -56,7 +74,7 @@ const TopHeader = () => {
                             </Link>
                         </>
                     ) : (
-                        <div className="flex items-center gap-2 relative">
+                        <div className="flex items-center gap-2 relative" ref={dropdownRef}>
                             <div
                                 className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center cursor-pointer"
                                 onClick={() => setShowDropdown((prev) => !prev)}

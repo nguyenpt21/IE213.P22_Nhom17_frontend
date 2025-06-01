@@ -5,10 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetSearchSuggestionsQuery } from "../redux/api/tourApiSlice";
 import { GrLocation } from "react-icons/gr";
-import {
-    removeSearch,
-    addSearch,
-} from "../redux/features/recentSearchSlice";
+import { removeSearch, addSearch } from "../redux/features/recentSearchSlice";
 import { CLOUDINARY_BASE_URL } from "../constants/hotel";
 const TourSearch = () => {
     const navigate = useNavigate();
@@ -29,9 +26,7 @@ const TourSearch = () => {
         }
     }, [cities, isCitiesLoading]);
 
-    const allCity = [...cityOptions,
-        ...cityOptions
-    ];
+    const allCity = [...cityOptions, ...cityOptions];
 
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -124,9 +119,13 @@ const TourSearch = () => {
                                             className="flex justify-between items-center py-1"
                                         >
                                             <span
-                                                className="text-blue-600 cursor-pointer hover:underline"
+                                                className="text-gray-600 cursor-pointer "
                                                 onClick={() =>
-                                                    handleSearch(item)
+                                                    navigate(
+                                                        `/search?query=${encodeURIComponent(
+                                                            item
+                                                        )}`
+                                                    )
                                                 }
                                             >
                                                 {item}

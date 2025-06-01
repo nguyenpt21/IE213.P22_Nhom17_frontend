@@ -23,7 +23,7 @@ import HotelInformation from "../../components/HotelInformation";
 import { FaAngleRight } from "react-icons/fa6";
 import ImageGalleryFromCloudinary from "../../components/ImageGalleryFromCloudinary";
 import { CLOUDINARY_BASE_URL } from "../../constants/hotel";
-import RoomTypesInformation from "../../components/RoomTypesInfomation";
+import RoomTypesInformation from "../../components/roomTypesInfomation";
 import { useGetSearchHotelSuggestionQuery } from "../../redux/api/hotelApiSlice";
 import { skipToken } from "@reduxjs/toolkit/query";
 dayjs.extend(customParseFormat);
@@ -31,6 +31,7 @@ const dateFormat = "DD/MM/YYYY";
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 import { Box, CircularProgress } from "@mui/material";
+import ReviewCard from "../../components/ReviewCard";
 const { RangePicker } = DatePicker;
 
 const HotelDetails = () => {
@@ -124,12 +125,22 @@ const HotelDetails = () => {
     const minPrice = Math.min(
         ...(Array.isArray(availableRooms)
             ? availableRooms.flatMap((roomType) =>
-                  Array.isArray(roomType.rooms)
-                      ? roomType.rooms.map((avaiRoom) => avaiRoom?.price || 0)
-                      : []
-              )
+                Array.isArray(roomType.rooms)
+                    ? roomType.rooms.map((avaiRoom) => avaiRoom?.price || 0)
+                    : []
+            )
             : [0])
     );
+
+    useEffect(() => {
+        const url = new URL(window.location.href);
+
+        if (url.searchParams.has("token")) {
+            url.searchParams.delete("token");
+
+            window.history.replaceState({}, "", url.pathname + url.search);
+        }
+    }, []);
 
     if (isHotelLoading || isAvaiRoomsLoading || isFacilitiesLoading) {
         return (
@@ -143,16 +154,6 @@ const HotelDetails = () => {
             </Box>
         );
     }
-
-    useEffect(() => {
-        const url = new URL(window.location.href);
-
-        if (url.searchParams.has("token")) {
-            url.searchParams.delete("token");
-
-            window.history.replaceState({}, "", url.pathname + url.search);
-        }
-    }, []);
 
     return (
         <div>
@@ -274,7 +275,12 @@ const HotelDetails = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-4 mb-12">
-                        <div className="p-4 border border-gray-300 rounded-lg"></div>
+                        <div className="p-4 border border-gray-300 rounded-lg">
+                            <ReviewCard
+                                hotelId={hotel._id}
+                                type="Hotel"
+                            />
+                        </div>
                         <div className="p-4 border border-gray-300 rounded-lg grid grid-cols-2">
                             {facilities.slice(0, 4).map((fc, index) => (
                                 <p
@@ -348,6 +354,7 @@ const SearchHotel = ({
     } = useGetSearchHotelSuggestionQuery(
         location ? { key: location } : skipToken
     );
+    const [messageApi, contextMessageHolder] = message.useMessage();
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (inputRef.current && !inputRef.current.contains(event.target)) {
@@ -369,6 +376,7 @@ const SearchHotel = ({
 
     return (
         <div className={`flex items-center gap-2`}>
+            {contextMessageHolder}
             <div
                 ref={inputRef}
                 className="relative rounded-lg bg-white py-2 px-3 w-full"
@@ -419,8 +427,17 @@ const SearchHotel = ({
                     format={dateFormat}
                     onChange={(dates) => {
                         if (dates) {
-                            setCheckIn(dates[0]);
-                            setCheckOut(dates[1]);
+                            const [start, end] = dates;
+                            if (start.isSame(end, "day")) {
+                                messageApi.error(
+                                    "Ngày nhận và trả phòng không được trùng nhau!"
+                                );
+                                setCheckIn(null);
+                                setCheckOut(null);
+                                return;
+                            }
+                            setCheckIn(start);
+                            setCheckOut(end);
                         } else {
                             setCheckIn(null);
                             setCheckOut(null);

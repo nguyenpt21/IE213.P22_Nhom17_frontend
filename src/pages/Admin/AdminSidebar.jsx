@@ -40,8 +40,7 @@ const AdminSidebar = () => {
         };
     }, [selectedUser]);
 
-    console.log("sidebar - ", unreadCount)
-    console.log("sidebar - ", Object.values(unreadCount).some((count) => count > 0))
+    const [openDropdown, setOpenDropdown] = useState(null);
 
 
     const location = useLocation();
@@ -59,8 +58,17 @@ const AdminSidebar = () => {
         },
         {
             title: "Booking",
-            to: "/admin/booking",
-            icon: <FaMoneyBillWave className="text-lg" />,
+            icon: <FaMoneyBillWave/>, 
+            submenu: [
+                {
+                    title: "Tour Booking",
+                    to: "/admin/booking/tour",
+                },
+                {
+                    title: "Hotel Booking",
+                    to: "/admin/booking/hotel",
+                },
+            ],
         },
         {
             title: "Tour",
@@ -119,23 +127,60 @@ const AdminSidebar = () => {
 
             <nav className="mt-5">
                 <ul className="space-y-1">
-                    {MENU_ITEMS.map((item, index) => (
-                        <li key={index} className="px-1">
-                            <Link
-                                to={item.to}
-                                className={`flex gap-3 items-center h-12 px-4 hover:bg-[#f2f2fc] rounded-lg ${location.pathname === item.to ? "bg-[#f2f2fc]" : ""
-                                    }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-5 h-5 flex items-center justify-center">{item.icon}</div>
-                                    {!isCollapsed && <span>{item.title}</span>}
-                                </div>
-                                {!isCollapsed && item.showNewBadge && (
-                                    <span className="text-xs font-semibold text-red-500">Mới</span>
+                    {MENU_ITEMS.map((item, index) => {
+                        const isActive = location.pathname === item.to;
+                        const isDropdownOpen = openDropdown === item.title;
+                        return (
+                            <li key={index} className="px-1">
+                                {item.submenu ? (
+                                    <>
+                                        <button
+                                            onClick={() => setOpenDropdown(isDropdownOpen ? null : item.title)}
+                                            className={`flex justify-between items-center w-full h-12 px-4 rounded-lg hover:bg-[#f2f2fc] ${isDropdownOpen ? "bg-[#f2f2fc]" : ""}`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-5 h-5 flex items-center justify-center">{item.icon}</div>
+                                                {!isCollapsed && <span>{item.title}</span>}
+                                            </div>
+                                            {!isCollapsed && (
+                                                <MdKeyboardArrowRight
+                                                    className={`transition-transform duration-300 text-[18px] ${isDropdownOpen ? "rotate-90" : ""}`}
+                                                />
+                                            )}
+                                        </button>
+
+                                        {!isCollapsed && isDropdownOpen && (
+                                            <ul className="space-y-1">
+                                                {item.submenu.map((sub, subIdx) => (
+                                                    <li key={subIdx}>
+                                                        <Link
+                                                            to={sub.to}
+                                                            className={`block  pl-10 py-2 my-1 rounded hover:bg-[#f9f9fc] ${location.pathname === sub.to ? "bg-[#f2f2fc]" : "text-gray-700"}`}
+                                                        >
+                                                            {sub.title}
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </>
+                                ) : (
+                                    <Link
+                                        to={item.to}
+                                        className={`flex gap-3 items-center h-12 px-4 hover:bg-[#f2f2fc] rounded-lg ${isActive ? "bg-[#f2f2fc]" : ""}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-5 h-5 flex items-center justify-center">{item.icon}</div>
+                                            {!isCollapsed && <span>{item.title}</span>}
+                                        </div>
+                                        {!isCollapsed && item.showNewBadge && (
+                                            <span className="text-xs font-semibold text-red-500">Mới</span>
+                                        )}
+                                    </Link>
                                 )}
-                            </Link>
-                        </li>
-                    ))}
+                            </li>
+                        );
+                    })}
                 </ul>
             </nav>
         </div>

@@ -27,13 +27,13 @@ const HotelSearch = () => {
         const [checkOut, setCheckOut] = useState(null);
         const [rooms, setRooms] = useState(1);
         const [adults, setAdults] = useState(2);
-        
+
         const [open, setOpen] = useState(false);
         const { data: searchSuggestions, error, isLoading: isSearching } = useGetSearchHotelSuggestionQuery(
             location ? { key: location } : skipToken
         );
         console.log(searchSuggestions)
-        
+
         const handleSearch = () => {
             const params = new URLSearchParams();
             if (!location || !checkIn || !checkOut) {
@@ -48,7 +48,7 @@ const HotelSearch = () => {
 
             navigate(`/hotels/search?${params.toString()}`);
         };
-    
+
         const inputRef = useRef(null);
         useEffect(() => {
             const handleClickOutside = (event) => {
@@ -113,6 +113,15 @@ const HotelSearch = () => {
                         format={dateFormat}
                         onChange={(dates) => {
                             if (dates) {
+                                const [start, end] = dates;
+                                if (start.isSame(end, "day")) {
+                                    messageApi.error(
+                                        "Ngày nhận và trả phòng không được trùng nhau!"
+                                    );
+                                    setCheckIn(null);
+                                    setCheckOut(null);
+                                    return;
+                                }
                                 setCheckIn(dates[0]);
                                 setCheckOut(dates[1]);
                             } else {
@@ -189,7 +198,7 @@ const HotelSearch = () => {
                 ))}
             </div>
 
-            <div className='container mx-auto mt-10'>
+            <div className='container mx-auto my-10'>
                 <p className='text-[24px] font-semibold pb-3'>Quảng cáo</p>
                 <div className='grid grid-cols-2'>
                     <img
@@ -200,9 +209,9 @@ const HotelSearch = () => {
                 </div>
             </div>
 
-            <div className='container mx-auto mt-10'>
+            {/* <div className='container mx-auto mt-10'>
                 <p className='text-[24px] font-semibold pb-3'>Địa điểm nổi bật</p>
-            </div>
+            </div> */}
         </div>
     )
 }

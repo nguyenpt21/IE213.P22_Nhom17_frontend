@@ -89,7 +89,7 @@ const AllBookingsModal = ({ visible, onCancel }) => {
             pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Chờ xử lý' },
             confirmed: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Đã xác nhận' },
             completed: { bg: 'bg-green-100', text: 'text-green-800', label: 'Hoàn thành' },
-            canceled: { bg: 'bg-red-100', text: 'text-red-800', label: 'Đã hủy' }
+            cancelled: { bg: 'bg-red-100', text: 'text-red-800', label: 'Đã hủy' }
         };
 
         const config = statusConfig[status] || statusConfig.pending;
@@ -208,7 +208,7 @@ const AllBookingsModal = ({ visible, onCancel }) => {
                             <option value="pending">Chờ xử lý</option>
                             <option value="confirmed">Đã xác nhận</option>
                             <option value="completed">Hoàn thành</option>
-                            <option value="canceled">Đã hủy</option>
+                            <option value="cancelled">Đã hủy</option>
                         </select>
 
                         <button

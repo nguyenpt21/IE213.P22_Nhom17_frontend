@@ -18,14 +18,10 @@ const UserRoutes = () => {
                 <Route path="/customer-support" element={<Chat/>}/>
 
                 <Route element={<UserSidebarLayout />}>
-                    <Route path="bookings" element={<MyBookings />} />
+                    <Route path="my-bookings" element={<MyBookings />} />
                     <Route path="my-reviews" element={<MyReviews />} />
                     <Route path="profile/edit" element={<ProfileEdit />} />
                 </Route>
-
-                <Route path="profile" element={<div>User Profile</div>} />
-                <Route path="favorites" element={<div>Favorite Hotels</div>} />
-
             </Route>
         </Routes>
     );

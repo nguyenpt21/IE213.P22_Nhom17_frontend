@@ -87,10 +87,10 @@ const HomeHotelList = () => {
         );
     }
 
-    const { data: hotel, refetch, isLoading } = useGetHotelsQuery({ limit: 3 });
+    const { data: hotel, refetch, isLoading } = useGetHotelsQuery({ limit: 6 });
 
     if (isLoading) {
-        return <div>Loading</div>;
+        return <div></div>;
     }
     const allhotels = [...hotel.data, ...hotel.data];
 
@@ -104,7 +104,7 @@ const HomeHotelList = () => {
             </div>
             <div className="container mx-auto relative mt-4">
                 <GeneralCarousel responsive={responsive}>
-                    {allhotels.map((hotel, key) => (
+                    {allhotels.slice(0, 6).map((hotel, key) => (
                         <HotelCard hotel={hotel} key={key}></HotelCard>
                     ))}
                 </GeneralCarousel>

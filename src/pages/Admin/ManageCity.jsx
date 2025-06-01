@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IoSearch } from "react-icons/io5";
 import { IoMdAddCircleOutline, IoMdRefresh } from "react-icons/io";
+import { FaPlus } from "react-icons/fa6";
 import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useGetCitiesQuery, useDeleteCityMutation, useUpdateCityMutation } from '../../redux/api/cityApiSlice';
@@ -209,57 +210,73 @@ const ManageCity = () => {
                 toast.error('Vui lòng điền đầy đủ thông tin cho tất cả câu hỏi phổ biến');
                 return;
             }
-            // Nếu có ảnh mới, gửi FormData
-            const hasNewCityImage = editImages.some(img => img instanceof File);
-            const hasNewPopularPlaceImage = editPopularPlacesImages.some(p => p.image instanceof File);
-            if (hasNewCityImage || hasNewPopularPlaceImage) {
-                const formData = new FormData();
-                formData.append('name', editForm.name.trim());
-                formData.append('description', editForm.description.trim());
-                formData.append('bestTimeToVisit', editForm.bestTimeToVisit.trim());
-                // Ảnh thành phố
-                editImages.forEach(img => {
-                    if (img instanceof File) formData.append('images', img);
-                    else if (typeof img === 'string') formData.append('oldImages', img); // giữ lại ảnh cũ
+
+            // Xử lý ảnh thành phố - gửi cả ảnh mới và ảnh cũ còn lại
+            const remainingOldImages = editImages.filter(img => typeof img === 'string');
+            const newImages = editImages.filter(img => img instanceof File);
+            const originalImages = editingCity?.img || [];
+            
+            // Debug logging
+            console.log('=== UPDATE CITY DEBUG ===');
+            console.log('Original city images:', originalImages);
+            console.log('Current editImages:', editImages);
+            console.log('Remaining old images:', remainingOldImages);
+            console.log('New images:', newImages);
+            console.log('Images deleted?', originalImages.length !== remainingOldImages.length);
+            
+            // Luôn dùng FormData để đảm bảo backend xử lý đúng
+            const formData = new FormData();
+            formData.append('name', editForm.name.trim());
+            formData.append('description', editForm.description.trim());
+            formData.append('bestTimeToVisit', editForm.bestTimeToVisit.trim());
+            
+            // Gửi ảnh cũ còn lại (để backend biết những ảnh nào cần giữ)
+            if (remainingOldImages.length > 0) {
+                remainingOldImages.forEach(img => {
+                    formData.append('oldImages', img);
                 });
-                // Địa điểm nổi bật
-                editForm.popularPlaces.forEach((place, idx) => {
-                    formData.append(`popularPlaces[${idx}].name`, place.name.trim());
-                    formData.append(`popularPlaces[${idx}].description`, place.description.trim());
-                    // Ảnh mới
-                    if (editPopularPlacesImages[idx]?.image instanceof File) {
-                        formData.append(`popularPlaces[${idx}].img`, editPopularPlacesImages[idx].image);
-                    } else if (editPopularPlacesImages[idx]?.oldImg) {
-                        formData.append(`popularPlaces[${idx}].oldImg`, editPopularPlacesImages[idx].oldImg);
-                    }
-                });
-                // Câu hỏi phổ biến
-                editForm.popularQuestions.forEach((q, idx) => {
-                    formData.append(`popularQuestion[${idx}].Question`, q.Question.trim());
-                    formData.append(`popularQuestion[${idx}].answer`, q.answer.trim());
-                });
-                await updateCity({ id: editingCity._id, data: formData }).unwrap();
-            } else {
-                // Không có ảnh mới, gửi object thường
-                await updateCity({
-                    id: editingCity._id,
-                    data: {
-                        name: editForm.name.trim(),
-                        description: editForm.description.trim(),
-                        bestTimeToVisit: editForm.bestTimeToVisit.trim(),
-                        popularPlace: editForm.popularPlaces.map(place => ({
-                            name: place.name.trim(),
-                            description: place.description.trim(),
-                            img: place.img || null
-                        })),
-                        img: editImages, // giữ lại ảnh cũ
-                        popularQuestion: editForm.popularQuestions.map(q => ({
-                            Question: q.Question.trim(),
-                            answer: q.answer.trim()
-                        }))
-                    }
-                }).unwrap();
             }
+            
+            // Gửi ảnh mới (nếu có)
+            if (newImages.length > 0) {
+                newImages.forEach(img => {
+                    formData.append('images', img);
+                });
+            }
+            
+            // Thêm một file dummy để đảm bảo backend nhận diện là multipart/form-data
+            if (newImages.length === 0) {
+                // Tạo một blob rỗng để đảm bảo req.files tồn tại
+                const emptyBlob = new Blob([''], { type: 'text/plain' });
+                formData.append('dummy', emptyBlob, 'dummy.txt');
+            }
+            
+            // Địa điểm nổi bật
+            editForm.popularPlaces.forEach((place, idx) => {
+                formData.append(`popularPlaces[${idx}].name`, place.name.trim());
+                formData.append(`popularPlaces[${idx}].description`, place.description.trim());
+                // Ảnh địa điểm
+                if (editPopularPlacesImages[idx]?.image instanceof File) {
+                    formData.append(`popularPlaces[${idx}].img`, editPopularPlacesImages[idx].image);
+                } else if (editPopularPlacesImages[idx]?.oldImg) {
+                    formData.append(`popularPlaces[${idx}].oldImg`, editPopularPlacesImages[idx].oldImg);
+                }
+            });
+            
+            // Câu hỏi phổ biến
+            editForm.popularQuestions.forEach((q, idx) => {
+                formData.append(`popularQuestion[${idx}].Question`, q.Question.trim());
+                formData.append(`popularQuestion[${idx}].answer`, q.answer.trim());
+            });
+
+            // Debug FormData
+            console.log('FormData entries:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+            console.log('=== END DEBUG ===');
+
+            await updateCity({ id: editingCity._id, data: formData }).unwrap();
             toast.success('Cập nhật thành phố thành công!');
             handleCloseEditModal();
             refetch();
@@ -324,60 +341,64 @@ const ManageCity = () => {
 
     return (
         <div className='bg-softBlue min-h-screen p-4 md:p-8'>
-            <p className='font-semibold text-[20px] md:text-[24px]'>Tất cả thành phố</p>
-            <div className='bg-white rounded-lg shadow-md mt-4 p-4 md:p-6'>
-                {/* Search Bar */}
-                <form onSubmit={handleSearch} className='flex flex-col sm:flex-row sm:items-center gap-3'>
-                    <span className='text-[16px] font-medium text-gray-500'>Tìm kiếm</span>
-                    <div className='flex items-center border border-gray-300 rounded-lg p-2 focus-within:border-gray-600'>
-                        <input
-                            type='text'
-                            placeholder='Tìm kiếm thành phố...'
-                            className='text-[14px] outline-none flex-1'
-                            value={search}
-                            onChange={(e) => {
-                                setSearch(e.target.value);
-                                if (!e.target.value.trim()) {
-                                    setSearched(false);
-                                    setFilteredResults([]);
-                                }
-                            }}
-                        />
-                        <button type="submit" className='p-1 hover:bg-gray-100 rounded-full'>
-                            <IoSearch className='text-gray-500 text-[20px]' />
-                        </button>
-                    </div>
-
-                    <div className='ml-auto flex items-center'>
-                        <button 
-                            type="button"
-                            className='hover:bg-gray-100 p-2 rounded-full' 
-                            onClick={() => navigate('/admin/create-city')}
-                        >
-                            <IoMdAddCircleOutline className='text-[28px] text-green-400' />
-                        </button>
-                        <button 
-                            type="button"
-                            className='hover:bg-gray-100 p-2 rounded-full' 
-                            onClick={refetch}
-                        >
-                            <IoMdRefresh className='text-[28px] text-gray-400' />
-                        </button>
-                    </div>
-                </form>
-
-                {/* Results */}
-                <div className='mt-4 p-4'>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
-                        {(searched ? filteredResults : validCities).map((city) => (
-                            <CityCard
-                                key={city._id}
-                                city={city}
-                                onEdit={() => handleOpenEditModal(city)}
-                                onDelete={() => handleOpenDeleteDialog(city)}
-                                isDeleting={isDeleting && cityToDelete?._id === city._id}
+            <div className='mx-auto'>
+                <div className='flex items-center'>
+                    <p className='flex-1 font-semibold text-[20px] md:text-[24px]'>Tất cả thành phố</p>
+                    <button
+                        className='py-2 px-4 rounded-lg bg-blue-500 text-white font-semibold text-[14px] flex items-center'
+                        onClick={() => navigate('/admin/create-city')}
+                    >
+                        <FaPlus className='mr-2' />
+                        Thêm thành phố
+                    </button>
+                </div>
+                <div className='bg-white rounded-lg shadow-md mt-4 p-4 md:p-6'>
+                    {/* Search Bar */}
+                    <form onSubmit={handleSearch} className='flex flex-col sm:flex-row sm:items-center gap-3'>
+                        <span className='text-[16px] font-medium text-gray-500'>Tìm kiếm</span>
+                        <div className='flex items-center border border-gray-300 rounded-lg p-2 focus-within:border-gray-600'>
+                            <input
+                                type='text'
+                                placeholder='Tìm kiếm thành phố...'
+                                className='text-[14px] outline-none flex-1'
+                                value={search}
+                                onChange={(e) => {
+                                    setSearch(e.target.value);
+                                    if (!e.target.value.trim()) {
+                                        setSearched(false);
+                                        setFilteredResults([]);
+                                    }
+                                }}
                             />
-                        ))}
+                            <button type="submit" className='p-1 hover:bg-gray-100 rounded-full'>
+                                <IoSearch className='text-gray-500 text-[20px]' />
+                            </button>
+                        </div>
+
+                        <div className='ml-auto flex items-center'>
+                            <button 
+                                type="button"
+                                className='hover:bg-gray-100 p-2 rounded-full' 
+                                onClick={refetch}
+                            >
+                                <IoMdRefresh className='text-[28px] text-gray-400' />
+                            </button>
+                        </div>
+                    </form>
+
+                    {/* Results */}
+                    <div className='mt-4 p-4'>
+                        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
+                            {(searched ? filteredResults : validCities).map((city) => (
+                                <CityCard
+                                    key={city._id}
+                                    city={city}
+                                    onEdit={() => handleOpenEditModal(city)}
+                                    onDelete={() => handleOpenDeleteDialog(city)}
+                                    isDeleting={isDeleting && cityToDelete?._id === city._id}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -420,204 +441,440 @@ const ManageCity = () => {
             <Dialog
                 open={editModalOpen}
                 onClose={handleCloseEditModal}
-                maxWidth="md"
+                maxWidth="lg"
                 fullWidth
+                PaperProps={{
+                    style: {
+                        borderRadius: '16px',
+                        maxHeight: '90vh'
+                    }
+                }}
             >
-                <DialogTitle>
-                    Chỉnh sửa thành phố
+                <DialogTitle className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <MdEdit className="text-2xl" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold">Chỉnh sửa thành phố</h2>
+                            <p className="text-blue-100 text-sm">Cập nhật thông tin và hình ảnh thành phố</p>
+                        </div>
+                    </div>
                 </DialogTitle>
-                <DialogContent>
-                    <div className="space-y-4 mt-2">
-                    <TextField
-                        fullWidth
-                            label="Tên thành phố"
-                            value={editForm.name}
-                            onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                            variant="outlined"
-                            size="small"
-                    />
-                    <TextField
-                        fullWidth
-                        label="Mô tả"
-                            value={editForm.description}
-                            onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                            variant="outlined"
-                        multiline
-                        rows={4}
-                            size="small"
-                        />
-                        <TextField
-                            fullWidth
-                            label="Thời điểm tốt nhất để ghé thăm"
-                            value={editForm.bestTimeToVisit}
-                            onChange={(e) => setEditForm({ ...editForm, bestTimeToVisit: e.target.value })}
-                            variant="outlined"
-                            multiline
-                            rows={3}
-                            size="small"
-                        />
-
-                        {/* UI upload/xóa ảnh thành phố */}
-                        <div className="mb-4">
-                            <label className="block font-medium mb-2">Hình ảnh thành phố</label>
-                            <div className="flex flex-wrap gap-4 mb-3">
-                                {editImages.map((img, idx) => (
-                                    <div key={idx} className="relative">
-                                        <img src={img instanceof File ? URL.createObjectURL(img) : img} alt={`city-edit-${idx}`} className="w-24 h-24 object-cover rounded" />
-                                        <IconButton size="small" className="absolute top-1 right-1 bg-white" onClick={() => handleRemoveEditImage(idx)}>
-                                            <DeleteIcon fontSize="small" />
-                                        </IconButton>
-                                    </div>
-                                ))}
-                                <Button variant="outlined" component="label" startIcon={<AddIcon />} className="h-24 w-24">
-                                    Thêm ảnh
-                                    <input type="file" hidden multiple accept="image/*" onChange={handleEditImageUpload} />
-                                </Button>
+                <DialogContent className="p-0">
+                    <div className="p-8 space-y-8">
+                        {/* Basic Information Section */}
+                        <div className="space-y-6">
+                            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2 border-b pb-2">
+                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <MdEdit className="text-blue-600" />
+                                </div>
+                                Thông tin cơ bản
+                            </h3>
+                            
+                            <div className="grid grid-cols-1 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">
+                                        Tên thành phố <span className="text-red-500">*</span>
+                                    </label>
+                                    <TextField
+                                        fullWidth
+                                        value={editForm.name}
+                                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                        variant="outlined"
+                                        size="medium"
+                                        placeholder="Nhập tên thành phố"
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: '12px',
+                                                '&:hover fieldset': {
+                                                    borderColor: '#3B82F6',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: '#3B82F6',
+                                                    borderWidth: '2px',
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">
+                                        Mô tả <span className="text-red-500">*</span>
+                                    </label>
+                                    <TextField
+                                        fullWidth
+                                        value={editForm.description}
+                                        onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                                        variant="outlined"
+                                        multiline
+                                        rows={4}
+                                        placeholder="Nhập mô tả chi tiết về thành phố"
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: '12px',
+                                                '&:hover fieldset': {
+                                                    borderColor: '#3B82F6',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: '#3B82F6',
+                                                    borderWidth: '2px',
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">
+                                        Thời điểm tốt nhất để ghé thăm <span className="text-red-500">*</span>
+                                    </label>
+                                    <TextField
+                                        fullWidth
+                                        value={editForm.bestTimeToVisit}
+                                        onChange={(e) => setEditForm({ ...editForm, bestTimeToVisit: e.target.value })}
+                                        variant="outlined"
+                                        multiline
+                                        rows={3}
+                                        placeholder="Nhập thông tin về thời điểm tốt nhất để tham quan"
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: '12px',
+                                                '&:hover fieldset': {
+                                                    borderColor: '#3B82F6',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: '#3B82F6',
+                                                    borderWidth: '2px',
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        <Divider className="my-4" />
+                        {/* City Images Section */}
+                        <div className="space-y-6">
+                            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2 border-b pb-2">
+                                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <AddIcon className="text-green-600" />
+                                </div>
+                                Hình ảnh thành phố
+                            </h3>
+                            
+                            <div className="bg-gray-50 rounded-xl p-6">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {editImages.map((img, idx) => (
+                                        <div key={idx} className="relative group">
+                                            <img 
+                                                src={img instanceof File ? URL.createObjectURL(img) : img} 
+                                                alt={`city-edit-${idx}`} 
+                                                className="w-full h-32 object-cover rounded-xl shadow-sm group-hover:shadow-md transition-shadow"
+                                            />
+                                            <IconButton 
+                                                size="small" 
+                                                className="absolute -top-2 -right-2 bg-red-500 text-white hover:bg-red-600 shadow-md"
+                                                onClick={() => handleRemoveEditImage(idx)}
+                                                sx={{
+                                                    backgroundColor: '#EF4444',
+                                                    color: 'white',
+                                                    '&:hover': {
+                                                        backgroundColor: '#DC2626'
+                                                    }
+                                                }}
+                                            >
+                                                <DeleteIcon fontSize="small" />
+                                            </IconButton>
+                                        </div>
+                                    ))}
+                                    <Button 
+                                        variant="outlined" 
+                                        component="label" 
+                                        className="h-32 border-2 border-dashed border-blue-300 hover:border-blue-500 hover:bg-blue-50 rounded-xl flex flex-col items-center justify-center gap-2 transition-colors"
+                                        sx={{
+                                            borderStyle: 'dashed',
+                                            borderWidth: '2px',
+                                            borderColor: '#93C5FD',
+                                            '&:hover': {
+                                                borderColor: '#3B82F6',
+                                                backgroundColor: '#EFF6FF'
+                                            }
+                                        }}
+                                    >
+                                        <AddIcon className="text-blue-500" />
+                                        <span className="text-sm font-medium text-blue-600">Thêm ảnh</span>
+                                        <input type="file" hidden multiple accept="image/*" onChange={handleEditImageUpload} />
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
 
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-medium">Địa điểm nổi bật</h3>
+                        <Divider />
+
+                        {/* Popular Places Section */}
+                        <div className="space-y-6">
+                            <div className="flex justify-between items-center border-b pb-2">
+                                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                        <MdAdd className="text-purple-600" />
+                                    </div>
+                                    Địa điểm nổi bật
+                                </h3>
                                 <Button
                                     startIcon={<MdAdd />}
                                     onClick={handleAddPopularPlace}
-                                    variant="outlined"
+                                    variant="contained"
                                     size="small"
+                                    sx={{
+                                        backgroundColor: '#8B5CF6',
+                                        borderRadius: '8px',
+                                        '&:hover': {
+                                            backgroundColor: '#7C3AED'
+                                        }
+                                    }}
                                 >
                                     Thêm địa điểm
                                 </Button>
                             </div>
 
-                            {editForm.popularPlaces.map((place, index) => (
-                                <div key={index} className="border rounded-lg p-4 relative">
-                                    <IconButton
-                                        size="small"
-                                        className="absolute top-2 right-2"
-                                        onClick={() => handleRemovePopularPlace(index)}
-                                    >
-                                        <MdDelete />
-                                    </IconButton>
+                            <div className="space-y-4">
+                                {editForm.popularPlaces.map((place, index) => (
+                                    <div key={index} className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-6 relative">
+                                        <IconButton
+                                            size="small"
+                                            className="absolute top-3 right-3 bg-red-500 text-white hover:bg-red-600"
+                                            onClick={() => handleRemovePopularPlace(index)}
+                                            sx={{
+                                                backgroundColor: '#EF4444',
+                                                color: 'white',
+                                                '&:hover': {
+                                                    backgroundColor: '#DC2626'
+                                                }
+                                            }}
+                                        >
+                                            <MdDelete />
+                                        </IconButton>
 
-                                    <div className="space-y-3">
-                                        <TextField
-                                            fullWidth
-                                            label="Tên địa điểm"
-                                            value={place.name}
-                                            onChange={(e) => handlePopularPlaceChange(index, 'name', e.target.value)}
-                                            variant="outlined"
-                                            size="small"
-                                        />
-                                        <TextField
-                                            fullWidth
-                                            label="Mô tả địa điểm"
-                                            value={place.description}
-                                            onChange={(e) => handlePopularPlaceChange(index, 'description', e.target.value)}
-                                            variant="outlined"
-                                            multiline
-                                            rows={2}
-                                            size="small"
-                                        />
-                                        {/* UI upload/xóa ảnh địa điểm nổi bật */}
-                                        <div>
-                                            <label className="block text-sm font-medium mb-1">Hình ảnh</label>
-                                            <div className="flex items-center gap-4">
-                                                {(editPopularPlacesImages[index]?.image || editPopularPlacesImages[index]?.oldImg) && (
-                                                    <div className="relative">
-                                                        <img
-                                                            src={editPopularPlacesImages[index]?.image ? URL.createObjectURL(editPopularPlacesImages[index].image) : editPopularPlacesImages[index]?.oldImg}
-                                                            alt={place.name}
-                                                            className="w-20 h-20 object-cover rounded"
-                                                        />
-                                                        <IconButton
-                                                            size="small"
-                                                            className="absolute top-1 right-1 bg-white"
-                                                            onClick={() => handleRemoveEditPopularPlaceImage(index)}
-                                                        >
-                                                            <DeleteIcon fontSize="small" />
-                                                        </IconButton>
-                                                    </div>
-                                                )}
-                                                <Button
-                                                    variant="outlined"
-                                                    component="label"
-                                                    startIcon={<AddIcon />}
-                                                    className={editPopularPlacesImages[index]?.image || editPopularPlacesImages[index]?.oldImg ? "h-10" : "h-20 w-20"}
-                                                >
-                                                    {editPopularPlacesImages[index]?.image || editPopularPlacesImages[index]?.oldImg ? 'Thay đổi ảnh' : 'Thêm ảnh'}
-                                                    <input
-                                                        type="file"
-                                                        hidden
-                                                        accept="image/*"
-                                                        onChange={(e) => handleEditPopularPlaceImageChange(index, e.target.files[0])}
+                                        <div className="space-y-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium text-gray-700">
+                                                        Tên địa điểm <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <TextField
+                                                        fullWidth
+                                                        value={place.name}
+                                                        onChange={(e) => handlePopularPlaceChange(index, 'name', e.target.value)}
+                                                        variant="outlined"
+                                                        size="small"
+                                                        placeholder="Nhập tên địa điểm"
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                backgroundColor: 'white',
+                                                                borderRadius: '8px'
+                                                            }
+                                                        }}
                                                     />
-                                                </Button>
+                                                </div>
+                                                
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-medium text-gray-700">
+                                                        Mô tả địa điểm <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <TextField
+                                                        fullWidth
+                                                        value={place.description}
+                                                        onChange={(e) => handlePopularPlaceChange(index, 'description', e.target.value)}
+                                                        variant="outlined"
+                                                        multiline
+                                                        rows={2}
+                                                        size="small"
+                                                        placeholder="Nhập mô tả địa điểm"
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                backgroundColor: 'white',
+                                                                borderRadius: '8px'
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">Hình ảnh</label>
+                                                <div className="flex items-center gap-4">
+                                                    {(editPopularPlacesImages[index]?.image || editPopularPlacesImages[index]?.oldImg) && (
+                                                        <div className="relative">
+                                                            <img
+                                                                src={editPopularPlacesImages[index]?.image ? URL.createObjectURL(editPopularPlacesImages[index].image) : editPopularPlacesImages[index]?.oldImg}
+                                                                alt={place.name}
+                                                                className="w-24 h-24 object-cover rounded-lg shadow-sm"
+                                                            />
+                                                            <IconButton
+                                                                size="small"
+                                                                className="absolute -top-2 -right-2 bg-red-500 text-white hover:bg-red-600"
+                                                                onClick={() => handleRemoveEditPopularPlaceImage(index)}
+                                                                sx={{
+                                                                    backgroundColor: '#EF4444',
+                                                                    color: 'white',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#DC2626'
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </div>
+                                                    )}
+                                                    <Button
+                                                        variant="outlined"
+                                                        component="label"
+                                                        startIcon={<AddIcon />}
+                                                        className={editPopularPlacesImages[index]?.image || editPopularPlacesImages[index]?.oldImg ? "h-12" : "h-24 w-24"}
+                                                        sx={{
+                                                            borderStyle: 'dashed',
+                                                            borderRadius: '8px',
+                                                            backgroundColor: 'white'
+                                                        }}
+                                                    >
+                                                        {editPopularPlacesImages[index]?.image || editPopularPlacesImages[index]?.oldImg ? 'Thay đổi ảnh' : 'Thêm ảnh'}
+                                                        <input
+                                                            type="file"
+                                                            hidden
+                                                            accept="image/*"
+                                                            onChange={(e) => handleEditPopularPlaceImageChange(index, e.target.files[0])}
+                                                        />
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
 
-                        <Divider className="my-4" />
+                        <Divider />
 
-                        <div className="space-y-4 mt-8">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-medium">Câu hỏi phổ biến</h3>
+                        {/* Popular Questions Section */}
+                        <div className="space-y-6">
+                            <div className="flex justify-between items-center border-b pb-2">
+                                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                                        <MdAdd className="text-orange-600" />
+                                    </div>
+                                    Câu hỏi phổ biến
+                                </h3>
                                 <Button
                                     startIcon={<MdAdd />}
                                     onClick={handleAddPopularQuestion}
-                                    variant="outlined"
+                                    variant="contained"
                                     size="small"
+                                    sx={{
+                                        backgroundColor: '#F97316',
+                                        borderRadius: '8px',
+                                        '&:hover': {
+                                            backgroundColor: '#EA580C'
+                                        }
+                                    }}
                                 >
                                     Thêm câu hỏi
                                 </Button>
                             </div>
-                            {editForm.popularQuestions.map((q, idx) => (
-                                <div key={idx} className="border rounded-lg p-4 relative">
-                                    <IconButton
-                                        size="small"
-                                        className="absolute top-2 right-2"
-                                        onClick={() => handleRemovePopularQuestion(idx)}
-                                    >
-                                        <MdDelete />
-                                    </IconButton>
-                                    <div className="space-y-3">
-                                        <TextField
-                                            fullWidth
-                                            label="Câu hỏi"
-                                            value={q.Question}
-                                            onChange={e => handlePopularQuestionChange(idx, 'Question', e.target.value)}
-                                            variant="outlined"
+                            
+                            <div className="space-y-4">
+                                {editForm.popularQuestions.map((q, idx) => (
+                                    <div key={idx} className="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-xl p-6 relative">
+                                        <IconButton
                                             size="small"
-                                        />
-                                        <TextField
-                                            fullWidth
-                                            label="Câu trả lời"
-                                            value={q.answer}
-                                            onChange={e => handlePopularQuestionChange(idx, 'answer', e.target.value)}
-                                            variant="outlined"
-                                            multiline
-                                            rows={2}
-                                            size="small"
-                                        />
+                                            className="absolute top-3 right-3 bg-red-500 text-white hover:bg-red-600"
+                                            onClick={() => handleRemovePopularQuestion(idx)}
+                                            sx={{
+                                                backgroundColor: '#EF4444',
+                                                color: 'white',
+                                                '&:hover': {
+                                                    backgroundColor: '#DC2626'
+                                                }
+                                            }}
+                                        >
+                                            <MdDelete />
+                                        </IconButton>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">
+                                                    Câu hỏi <span className="text-red-500">*</span>
+                                                </label>
+                                                <TextField
+                                                    fullWidth
+                                                    value={q.Question}
+                                                    onChange={e => handlePopularQuestionChange(idx, 'Question', e.target.value)}
+                                                    variant="outlined"
+                                                    size="small"
+                                                    placeholder="Nhập câu hỏi"
+                                                    sx={{
+                                                        '& .MuiOutlinedInput-root': {
+                                                            backgroundColor: 'white',
+                                                            borderRadius: '8px'
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                            
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">
+                                                    Câu trả lời <span className="text-red-500">*</span>
+                                                </label>
+                                                <TextField
+                                                    fullWidth
+                                                    value={q.answer}
+                                                    onChange={e => handlePopularQuestionChange(idx, 'answer', e.target.value)}
+                                                    variant="outlined"
+                                                    multiline
+                                                    rows={2}
+                                                    size="small"
+                                                    placeholder="Nhập câu trả lời"
+                                                    sx={{
+                                                        '& .MuiOutlinedInput-root': {
+                                                            backgroundColor: 'white',
+                                                            borderRadius: '8px'
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseEditModal} color="primary">
-                        Hủy
+                <DialogActions className="p-6 bg-gray-50 border-t">
+                    <Button 
+                        onClick={handleCloseEditModal} 
+                        variant="outlined"
+                        size="large"
+                        sx={{
+                            borderRadius: '8px',
+                            minWidth: '120px'
+                        }}
+                    >
+                        Hủy bỏ
                     </Button>
                     <Button
                         onClick={handleUpdateCity}
-                        color="primary"
                         variant="contained"
+                        size="large"
                         disabled={isUpdating}
+                        sx={{
+                            backgroundColor: '#3B82F6',
+                            borderRadius: '8px',
+                            minWidth: '120px',
+                            '&:hover': {
+                                backgroundColor: '#2563EB'
+                            }
+                        }}
                     >
                         {isUpdating ? 'Đang cập nhật...' : 'Cập nhật'}
                     </Button>

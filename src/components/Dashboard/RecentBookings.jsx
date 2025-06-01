@@ -26,7 +26,7 @@ const RecentBookings = ({ bookings }) => {
             pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Chờ xử lý' },
             confirmed: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Đã xác nhận' },
             completed: { bg: 'bg-green-100', text: 'text-green-800', label: 'Hoàn thành' },
-            canceled: { bg: 'bg-red-100', text: 'text-red-800', label: 'Đã hủy' }
+            cancelled: { bg: 'bg-red-100', text: 'text-red-800', label: 'Đã hủy' }
         };
 
         const config = statusConfig[status] || statusConfig.pending;

@@ -15,6 +15,8 @@ import TourCheckoutSuccess from "../components/TourCheckoutSuccess";
 import TourList from "../pages/User/TourList";
 import HotelCheckoutSuccess from "../components/HotelCheckoutSuccess";
 import CheckoutStripeSuccess from "../components/CheckoutStripeSuccess";
+import About from "../pages/User/About"
+import Contact from "../pages/User/Contact";
 
 const PublicRoutes = () => {
     const { user } = useSelector((state) => state.auth);
@@ -47,6 +49,8 @@ const PublicRoutes = () => {
                 ></Route>
                 <Route path="hotels/search" element={<HotelSearchResults />} />
                 <Route path="hotels/:_id" element={<HotelDetails />} />
+                <Route path="about" element={<About />} />
+                <Route path="contact" element={<Contact />} />
             </Route>
             <Route
                 path="tour/:_id/:_ticketId"
@@ -66,11 +70,11 @@ const PublicRoutes = () => {
             ></Route>
             <Route
                 path="hotel-checkout-success"
-                element={< HotelCheckoutSuccess/>}
+                element={< HotelCheckoutSuccess />}
             ></Route>
             <Route
                 path="checkout-stripe-success"
-                element={< CheckoutStripeSuccess/>}
+                element={< CheckoutStripeSuccess />}
             ></Route>
             <Route path="hotels/:_id/pay" element={<HotelBooking />} />
         </Routes>

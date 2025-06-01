@@ -1,23 +1,61 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { BsSearch } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
-import { NAV_LINKS } from '../constants';
+import { NAV_LINKS } from "../constants";
 import { GrLocation } from "react-icons/gr";
-import UserDropdown from './UserDropdown';
-import { logout } from '../redux/features/authSlice'
+import UserDropdown from "./UserDropdown";
+import { logout } from "../redux/features/authSlice";
+import { useGetCitiesQuery } from "../redux/api/cityApiSlice";
 
 export const MainHeader = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef(null);
 
     const { user } = useSelector((state) => state.auth);
+
+    // Handle click outside to close dropdown
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
+                setShowDropdown(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     const handleLogout = () => {
-        localStorage.removeItem('token');
+        localStorage.removeItem("token");
         dispatch(logout());
-        navigate('/');
+        navigate("/");
     };
+
+    const { data: cities, isCitiesLoading, error } = useGetCitiesQuery();
+    if (error) console.error("Error fetching cities:", error);
+    if (isCitiesLoading) return <div></div>;
+
+    const [cityOptions, setCityOptions] = useState([]);
+
+    useEffect(() => {
+        if (!isCitiesLoading && cities) {
+            const first_ct = cities.map((city) => ({
+                _id: city._id,
+                name: city.name,
+                img: city.img[0],
+            }));
+            const final = Array(3).fill(first_ct).flat();
+            setCityOptions(final.slice(0, 12));
+        }
+    }, [cities, isCitiesLoading]);
 
     function NavItem({ icon, children, href, Dropdown, notLink }) {
         const [open, setOpen] = useState(false);
@@ -63,10 +101,16 @@ export const MainHeader = () => {
                 <nav className="flex space-x-4 items-center ml-auto font-semibold">
                     {!user ? (
                         <>
-                            <Link to="#" className="hover:text-primary transition-colors text-[14px] font-medium">
+                            <Link
+                                to="#"
+                                className="hover:text-primary transition-colors text-[14px] font-medium"
+                            >
                                 Xem gần đây
                             </Link>
-                            <Link to="/sign-up" className="hover:text-primary transition-colors text-[14px]">
+                            <Link
+                                to="/sign-up"
+                                className="hover:text-primary transition-colors text-[14px]"
+                            >
                                 Đăng ký
                             </Link>
                             <Link
@@ -77,13 +121,18 @@ export const MainHeader = () => {
                             </Link>
                         </>
                     ) : (
-                        <div className="flex items-center gap-2 relative">
+                        <div
+                            className="flex items-center gap-2 relative"
+                            ref={dropdownRef}
+                        >
                             <div
                                 className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center cursor-pointer"
                                 onClick={() => setShowDropdown((prev) => !prev)}
                             >
                                 <span className="text-blue-500 text-lg font-bold">
-                                    {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                                    {user.firstName?.charAt(0) ||
+                                        user.email?.charAt(0) ||
+                                        "U"}
                                 </span>
                             </div>
                             <span
@@ -111,8 +160,33 @@ export const MainHeader = () => {
                             icon={<GrLocation className="w-[16px] h-[16px]" />}
                             notLink={true}
                             children="Địa điểm muốn đến"
-                            href="#"
-
+                            Dropdown={
+                                <div className="absolute pt-1">
+                                    <div className="w-[1220px] border bg-white">
+                                        <div className="mx-auto grid grid-cols-4 p-4 gap-x-4 mt-1 gap-y-6">
+                                            {cityOptions.map((city, index) => (
+                                                <Link 
+                                                to={`/city/${city._id}`}
+                                                    key={index}
+                                                    className=" flex gap-2 items-center"
+                                                >
+                                                    <img
+                                                        src={city.img}
+                                                        alt=""
+                                                        className="w-12 h-12 rounded-full"
+                                                    />
+                                                    <div className="flex flex-col justify-between">
+                                                        <span className="text-gray-400">
+                                                            Vui chơi giải trí
+                                                        </span>
+                                                        <h3>{city.name}</h3>
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         />
                         {NAV_LINKS.map((item, index) => (
                             <NavItem
@@ -130,8 +204,8 @@ export const MainHeader = () => {
                 </div>
             </div>
         </header>
-    )
-}
+    );
+};
 
 const Dropdown = ({ data }) => {
     return (
@@ -152,4 +226,4 @@ const Dropdown = ({ data }) => {
             </div>
         </div>
     );
-}
+};

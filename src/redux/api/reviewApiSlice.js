@@ -40,6 +40,12 @@ export const reviewApiSlice = apiSlice.injectEndpoints({
                 url: `${REVIEW_URL}/my-reviews`,
                 params: { userId }
             }),
+        }),
+        getReviewByProductId: builder.query({
+            query: ({ reviewableId, reviewableType }) => ({
+                url: `${REVIEW_URL}/`,
+                params: { reviewableId, reviewableType }
+            })
         })
     })
 });
@@ -50,5 +56,6 @@ export const {
     useAddReviewMutation,
     useUpdateReviewMutation,
     useDeleteReviewMutation,
-    useGetMyReviewsQuery
+    useGetMyReviewsQuery,
+    useGetReviewByProductIdQuery
 } = reviewApiSlice;

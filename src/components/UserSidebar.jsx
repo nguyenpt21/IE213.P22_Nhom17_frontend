@@ -7,7 +7,6 @@ import { MdRateReview } from "react-icons/md";
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 const sidebarItems = [
   {
@@ -18,17 +17,12 @@ const sidebarItems = [
   {
     label: 'Đặt chỗ của tôi',
     icon: <FaCalendarCheck className="text-xl" />,
-    to: '/user/bookings',
+    to: '/user/my-bookings',
   },
   {
     label: 'Đánh giá',
     icon: <MdRateReview className="text-xl" />,
     to: '/user/my-reviews',
-  },
-  {
-    label: 'Danh sách giao dịch',
-    icon: <FaListAlt className="text-xl" />,
-    to: '/user/transactions',
   },
 ];
 
@@ -54,7 +48,7 @@ const UserSidebar = ({ onLogout }) => {
     navigate('/');
     try {
       setIsLoggingOut(true);
-      await axios.post(`${API_URL}/api/users/logout`);
+      await axios.post('/api/users/logout');
       localStorage.removeItem('userInfo');
       localStorage.removeItem('token');
       setUserInfo(null);

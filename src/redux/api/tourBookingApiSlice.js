@@ -43,7 +43,20 @@ export const tourBookingSlice = apiSlice.injectEndpoints({
                 url: `${TOUR_BOOKING_URL}/${id}/cancel`,
                 method: "PUT",
             }),
-        })
+        }),
+        updateTourBookingStatus: builder.mutation({
+            query: ({ id, bookingStatus }) => ({
+                url: `${TOUR_BOOKING_URL}/${id}/status`,
+                method: "PUT",
+                body: { bookingStatus },
+            }),
+        }),
+        getTourBookings: builder.query({
+            query: (params = {}) => ({
+                url: `${TOUR_BOOKING_URL}/bookings`,
+                params,
+            }),
+        }),
     }),
 });
 
@@ -53,5 +66,7 @@ export const {
     useCreateTourCheckoutSessionMutation,
     useLazyGetStripeBookingStatusQuery,
     useGetMyTourBookingsQuery,
-    useCancelTourBookingMutation
+    useCancelTourBookingMutation,
+    useUpdateTourBookingStatusMutation,
+    useGetTourBookingsQuery,
 } = tourBookingSlice;

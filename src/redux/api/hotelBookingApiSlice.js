@@ -48,6 +48,19 @@ export const hotelBookingApiSlice = apiSlice.injectEndpoints({
                 body: bookingData,
             }),
         }),
+        updateHotelBookingStatus: builder.mutation({
+            query: ({ id, bookingStatus }) => ({
+                url: `${HOTEL_BOOKING_URL}/${id}/status`,
+                method: "PUT",
+                body: { bookingStatus },
+            }),
+        }),
+        getHotelBookings: builder.query({
+            query: ( params = {} ) => ({
+                url: `${HOTEL_BOOKING_URL}/bookings`,
+                params,
+            }),
+        }),
     }),
 });
 
@@ -58,4 +71,6 @@ export const {
     useCaptureHotelPaypalOrderAndSaveHotelBookingMutation,
     useCreateHotelPaypalOrderMutation,
     useCreateHotelCheckoutSessionMutation,
+    useUpdateHotelBookingStatusMutation,
+    useGetHotelBookingsQuery,
 } = hotelBookingApiSlice;

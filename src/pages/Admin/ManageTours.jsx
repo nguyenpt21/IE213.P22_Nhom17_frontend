@@ -17,7 +17,6 @@ import {
     DURATION_OPTIONS,
     LANGUAGE_OPTIONS,
 } from "../../constants/tour";
-import { Box, CircularProgress } from "@mui/material";
 const ManageTours = () => {
     const navigate = useNavigate();
     const sortOptionList = [
@@ -56,11 +55,7 @@ const ManageTours = () => {
         setPriceRange([0, 2000000]);
     };
 
-    const {
-        data: tours,
-        refetch,
-        isLoading,
-    } = useGetToursQuery({
+    const { data: tours, refetch } = useGetToursQuery({
         category: category?.join(","),
         languageService: language?.join(","),
         minPrice: priceRange[0],
@@ -86,19 +81,6 @@ const ManageTours = () => {
             setSearched(true);
         }
     };
-
-    if (isLoading) {
-        return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="100vh"
-            >
-                <CircularProgress />
-            </Box>
-        );
-    }
 
     return (
         <div className="bg-softBlue min-h-screen p-4 md:p-8">

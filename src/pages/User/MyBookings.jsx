@@ -22,7 +22,7 @@ const statusMap = {
     color: "bg-yellow-100 text-yellow-700",
     icon: <ClockIcon className="w-5 h-5 inline mr-1 text-[12px]" />,
   },
-  canceled: {
+  cancelled: {
     label: "Đã hủy",
     color: "bg-red-100 text-red-700",
     icon: <XCircleIcon className="w-5 h-5 inline mr-1 text-[12px]" />,

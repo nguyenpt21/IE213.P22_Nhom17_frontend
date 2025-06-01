@@ -27,18 +27,18 @@ const UserDropdown = ({ onLogout }) => {
           Chỉnh sửa hồ sơ
         </Link>
         <Link
-          to="/transactions"
+          to="/user/my-bookings"
           className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 font-semibold text-base"
         >
           <FaListAlt className="text-blue-500" />
-          Thông tin giao dịch
+          Đặt chỗ của tôi
         </Link>
         <Link
-          to="/my-bookings"
+          to="/user/my-reviews"
           className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 font-semibold text-base"
         >
           <FaCalendarCheck className="text-blue-500" />
-          Đặt chỗ của tôi
+          Đánh giá
         </Link>
         <button
           onClick={onLogout}

@@ -139,7 +139,7 @@ const SignUp = () => {
                         </Link>
                     </p>
 
-                    <div className="w-2/3 mx-auto mb-6 flex justify-center">
+                    {/* <div className="w-2/3 mx-auto mb-6 flex justify-center">
                         <div style={{ width: "320px" }}>
                             <GoogleLogin
                                 onSuccess={handleGoogleSuccess}
@@ -157,7 +157,7 @@ const SignUp = () => {
                         <div className="flex-grow h-px bg-gray-300"></div>
                         <div className="mx-4 text-gray-500">OR</div>
                         <div className="flex-grow h-px bg-gray-300"></div>
-                    </div>
+                    </div> */}
 
                     <form onSubmit={handleSubmit} className="w-2/3 mx-auto">
                         <div className="mb-4">

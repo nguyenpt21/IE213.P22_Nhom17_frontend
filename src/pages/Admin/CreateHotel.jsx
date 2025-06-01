@@ -15,7 +15,7 @@ import RoomTypeModal from '../../components/RoomTypeModal';
 import RoomModal from '../../components/RoomModal';
 import { useGetFacilitiesByCategoryQuery, useCreateHotelMutation } from '../../redux/api/hotelApiSlice';
 import HotelInformation from '../../components/HotelInformation';
-import RoomTypesInfomation from '../../components/RoomTypesInfomation';
+import RoomTypesInfomation from '../../components/roomTypesInfomation';
 import { FaChevronLeft } from "react-icons/fa6";
 import { CLOUDINARY_BASE_URL, PET_POLICIES } from '../../constants/hotel';
 import { useGetCitiesQuery } from '../../redux/api/cityApiSlice';

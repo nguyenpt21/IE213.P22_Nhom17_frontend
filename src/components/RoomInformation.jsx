@@ -92,7 +92,7 @@ const RoomInformation = ({ roomType, room, review, handleBookingRoom }) => {
                                     Đặt
                                 </button>
                             </div>
-                            {room.numRoomsAvailable < 20 && (
+                            {room.numRoomsAvailable && (
                                 <p className='text-red-600 text-[14px] font-light mt-3'>
                                     Chỉ còn {room.numRoomsAvailable} phòng!
                                 </p>

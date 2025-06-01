@@ -12,14 +12,13 @@ import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { useGetToursQuery } from "../../redux/api/tourApiSlice";
 import SelectItem from "../../components/SelectItem";
 import TourCard from "../../components/TourCard";
+import { Box, CircularProgress } from '@mui/material';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const CityDetail = () => {
     const { cityId } = useParams();
     const [city, setCity] = useState(null);
-    const [tours, setTours] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [showImageGallery, setShowImageGallery] = useState(false);
@@ -58,37 +57,6 @@ const CityDetail = () => {
         }
     }, [cityId]);
 
-    useEffect(() => {
-        // Lấy danh sách tour trong thành phố (nếu có API)
-        const fetchTours = async () => {
-            if (!cityId) return;
-
-            try {
-                console.log("Fetching tours for cityId:", cityId);
-                const res = await fetch(`/api/tour?cityId=${cityId}`);
-                console.log("Tours API response status:", res.status);
-
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-
-                const data = await res.json();
-                console.log("Tours API result:", data);
-
-                if (data.data) {
-                    setTours(data.data);
-                } else {
-                    console.log("No tours data found");
-                    setTours([]);
-                }
-            } catch (error) {
-                console.error("Error fetching tours:", error);
-                setTours([]);
-            }
-        };
-
-        fetchTours();
-    }, [cityId]);
 
     const panelStyle = {
         background: "#fff",
@@ -118,7 +86,19 @@ const CityDetail = () => {
                 style: childStyle,
             };
         });
-    if (loading || !city) return <div>Đang tải...</div>;
+    if (loading || !city)
+        return (
+            <div>
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <CircularProgress />
+                </Box>
+            </div>
+        );
 
     const TourInCity = () => {
         const sortOptionList = [
@@ -156,7 +136,7 @@ const CityDetail = () => {
             cityId,
         });
 
-        if (isLoading) return <div></div>
+        if (isLoading) return <div></div>;
 
         return (
             <div className="container mx-auto flex gap-6 items-start ">
@@ -218,7 +198,10 @@ const CityDetail = () => {
                             {LANGUAGE_OPTIONS.map((languageOption) => (
                                 <div
                                     onClick={() =>
-                                        handleFiler(languageOption.value, setLanguage)
+                                        handleFiler(
+                                            languageOption.value,
+                                            setLanguage
+                                        )
                                     }
                                     key={languageOption.value}
                                     className={`cursor-pointer px-2 py-2 border rounded-lg ${
@@ -244,7 +227,10 @@ const CityDetail = () => {
                                             : ""
                                     }`}
                                     onClick={() =>
-                                        handleFiler(durationOption.value, setDuration)
+                                        handleFiler(
+                                            durationOption.value,
+                                            setDuration
+                                        )
                                     }
                                 >
                                     {durationOption.label}
@@ -255,7 +241,9 @@ const CityDetail = () => {
                 </div>
                 <div className="flex-1">
                     <div className="flex items-center justify-between">
-                        <p className="font-semibold">Tìm thấy {tours.totalTours} kết quả</p>
+                        <p className="font-semibold">
+                            Tìm thấy {tours.totalTours} kết quả
+                        </p>
                         <SelectItem
                             selectTitle={"Sắp xếp theo"}
                             optionList={sortOptionList}

@@ -149,7 +149,7 @@ const TourList = () => {
                                 <CiSearch className="w-[28px] h-[28px]"></CiSearch>
                             </button>
                             {isFocused && (
-                                <div className="absolute w-[500px] top-[54px] left-0 mt-2 bg-white rounded-xl shadow-lg border p-4 z-50 min-h-[240px]">
+                                <div className="absolute w-[700px] top-[58px] left-0 mt-2 bg-white rounded-xl shadow-lg border p-4 z-50 min-h-[240px]">
                                     {query.trim() === "" ? (
                                         <>
                                             <h4 className="text-gray-500 font-semibold mb-2">
@@ -168,10 +168,12 @@ const TourList = () => {
                                                                 className="flex justify-between items-center py-1"
                                                             >
                                                                 <span
-                                                                    className="text-blue-600 cursor-pointer hover:underline"
+                                                                    className="text-gray-600 cursor-pointer "
                                                                     onClick={() =>
-                                                                        handleSearch(
-                                                                            item
+                                                                        navigate(
+                                                                            `/search?query=${encodeURIComponent(
+                                                                                item
+                                                                            )}`
                                                                         )
                                                                     }
                                                                 >
@@ -290,7 +292,7 @@ const TourList = () => {
                     </div>
                     <div className="flex gap-4 absolute -bottom-20 container mx-auto">
                         {cityOptions.map((city, index) => (
-                            <Link to="/" className="flex-1" key={index}>
+                            <Link to={`/city/${city._id}`} className="flex-1" key={index}>
                                 <div className="p-3 bg-white rounded-3xl h-full border">
                                     <img
                                         src={city.img}

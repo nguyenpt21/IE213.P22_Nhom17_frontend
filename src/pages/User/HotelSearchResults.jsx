@@ -259,8 +259,10 @@ const SearchHotel = ({ location, setLocation, checkIn, setCheckIn, checkOut, set
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [location, openDr, searchSuggestions]);
+    const [messageApi, contextMessageHolder] = message.useMessage();
     return (
         <div className={`flex items-center gap-2`}>
+            {contextMessageHolder}
             <div ref={inputRef} className='relative rounded-lg bg-slate-100 py-2 px-3 w-full'>
                 {/* <label className='text-[12px] text-gray-500 font-medium'>Địa điểm</label> */}
                 <input
@@ -304,6 +306,15 @@ const SearchHotel = ({ location, setLocation, checkIn, setCheckIn, checkOut, set
                     format={dateFormat}
                     onChange={(dates) => {
                         if (dates) {
+                            const [start, end] = dates;
+                            if (start.isSame(end, "day")) {
+                                messageApi.error(
+                                    "Ngày nhận và trả phòng không được trùng nhau!"
+                                );
+                                setCheckIn(null);
+                                setCheckOut(null);
+                                return;
+                            }
                             setCheckIn(dates[0]);
                             setCheckOut(dates[1]);
                         } else {

@@ -33,7 +33,7 @@ const HomeTourList = () => {
     };
 
 
-    const { data: tours, refetch, isLoading } = useGetToursQuery({ limit: 3 });
+    const { data: tours, refetch, isLoading } = useGetToursQuery({ });
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -50,7 +50,7 @@ const HomeTourList = () => {
             </div>
             <div className="container mx-auto relative mt-4">
                 <GeneralCarousel responsive={responsive}>
-                    {allTour.map((tour, index) => (
+                    {allTour.slice(0, 6).map((tour, index) => (
                         <TourCard tour={tour} key={index}></TourCard>
                     ))}
                 </GeneralCarousel>

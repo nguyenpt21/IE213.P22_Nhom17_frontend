@@ -109,26 +109,26 @@ const SignIn = () => {
                         </Link>
                     </p>
 
-                    <div className="w-2/3 mx-auto mb-6 flex justify-center">
+                    {/* <div className="w-2/3 mx-auto mb-6 flex justify-center">
                         <div style={{ width: "320px" }}>
                             {" "}
                             {/* Fixed width container */}
-                            <GoogleLogin
+                            {/* <GoogleLogin
                                 onSuccess={handleGoogleSuccess}
                                 onError={handleGoogleError}
                                 size="large"
                                 text="signin_with"
                                 shape="pill"
                                 logo_alignment="center"
-                            />
-                        </div>
+                            /> */}
+                        {/* </div>
                     </div>
 
                     <div className="flex w-2/3 mx-auto items-center mb-6">
                         <div className="flex-grow h-px bg-gray-300"></div>
                         <div className="mx-4 text-gray-500">OR</div>
                         <div className="flex-grow h-px bg-gray-300"></div>
-                    </div>
+                    </div> */} 
 
                     <form onSubmit={handleSubmit} className="w-2/3 mx-auto">
                         <div className="mb-4">
