@@ -4,7 +4,7 @@ let socket;
 
 export const connectSocket = (userId, role) => {
     if (socket) return socket;
-    BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
     socket = io(BASE_URL, {
         reconnection: true,
         reconnectionAttempts: 5,
