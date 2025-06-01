@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -40,7 +40,7 @@ export const login = async (email, password) => {
     try {
         // First try user login
         try {
-            const userResponse = await axiosInstance.post('/users/login', { email, password });
+            const userResponse = await axiosInstance.post('/api/users/login', { email, password });
             if (userResponse.data.success) {
                 localStorage.setItem('token', userResponse.data.data.token);
                 localStorage.setItem('userInfo', JSON.stringify(userResponse.data.data.user));
@@ -51,7 +51,7 @@ export const login = async (email, password) => {
         }
 
         // If user login fails, try admin login
-        const adminResponse = await axiosInstance.post('/admin/login', { email, password });
+        const adminResponse = await axiosInstance.post('/api/admin/login', { email, password });
         if (adminResponse.data.success) {
             localStorage.setItem('token', adminResponse.data.data.token);
             localStorage.setItem('userInfo', JSON.stringify(adminResponse.data.data.admin));
@@ -71,7 +71,7 @@ export const register = async (userData) => {
             userData.role = 'user';
         }
         
-        const response = await axiosInstance.post('/users/register', userData);
+        const response = await axiosInstance.post('/api/users/register', userData);
         return response.data;
     } catch (error) {
         console.error('Registration error:', error);
@@ -87,7 +87,7 @@ export const logout = () => {
 // Legacy admin login function (kept for backward compatibility)
 export const loginAdmin = async (email, password) => {
     try {
-        const response = await axiosInstance.post('/admin/login', { email, password });
+        const response = await axiosInstance.post('/api/admin/login', { email, password });
         if (response.data.success) {
             localStorage.setItem('token', response.data.data.token);
         }
@@ -143,7 +143,7 @@ export const isAuthenticated = () => {
 // Forgot password
 export const forgotPassword = async (email) => {
     try {
-        const response = await axiosInstance.post('/users/forgot-password', { email });
+        const response = await axiosInstance.post('/api/users/forgot-password', { email });
         return response.data;
     } catch (error) {
         console.error('Forgot password error:', error);
@@ -154,7 +154,7 @@ export const forgotPassword = async (email) => {
 // Reset password
 export const resetPassword = async (email, code, newPassword) => {
     try {
-        const response = await axiosInstance.post('/users/reset-password', { 
+        const response = await axiosInstance.post('/api/users/reset-password', { 
             email, 
             code, 
             newPassword 

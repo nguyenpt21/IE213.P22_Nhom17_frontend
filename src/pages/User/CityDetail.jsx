@@ -13,6 +13,9 @@ import { useGetToursQuery } from "../../redux/api/tourApiSlice";
 import SelectItem from "../../components/SelectItem";
 import TourCard from "../../components/TourCard";
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+
 const CityDetail = () => {
     const { cityId } = useParams();
     const [city, setCity] = useState(null);
@@ -28,7 +31,7 @@ const CityDetail = () => {
             try {
                 setLoading(true);
                 console.log("Fetching city with ID:", cityId);
-                const res = await fetch(`/api/cities/${cityId}`);
+                const res = await fetch(`${API_URL}/api/cities/${cityId}`);
                 console.log("API response status:", res.status);
 
                 if (!res.ok) {

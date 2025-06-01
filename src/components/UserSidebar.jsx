@@ -7,6 +7,7 @@ import { MdRateReview } from "react-icons/md";
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 const sidebarItems = [
   {
@@ -53,7 +54,7 @@ const UserSidebar = ({ onLogout }) => {
     navigate('/');
     try {
       setIsLoggingOut(true);
-      await axios.post('/api/users/logout');
+      await axios.post(`${API_URL}/api/users/logout`);
       localStorage.removeItem('userInfo');
       localStorage.removeItem('token');
       setUserInfo(null);
