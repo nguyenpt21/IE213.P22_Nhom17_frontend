@@ -4,13 +4,13 @@ let socket;
 
 export const connectSocket = (userId, role) => {
     if (socket) return socket;
-
-    socket = io("http://localhost:3000", {
+    const API_URL = import.meta.env.VITE_API_URL
+    socket = io(API_URL, {
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         query: { userId, role },
-        withCredentials: true
+        withCredentials: true,
     });
     return socket;
 };
