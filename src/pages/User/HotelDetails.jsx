@@ -23,7 +23,7 @@ import HotelInformation from "../../components/HotelInformation";
 import { FaAngleRight } from "react-icons/fa6";
 import ImageGalleryFromCloudinary from "../../components/ImageGalleryFromCloudinary";
 import { CLOUDINARY_BASE_URL } from "../../constants/hotel";
-import RoomTypesInformation from "../../components/roomTypesInfomation";
+import RoomTypesInformation from "../../components/RoomTypesInfomation";
 import { useGetSearchHotelSuggestionQuery } from "../../redux/api/hotelApiSlice";
 import { skipToken } from "@reduxjs/toolkit/query";
 dayjs.extend(customParseFormat);
