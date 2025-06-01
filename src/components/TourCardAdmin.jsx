@@ -63,7 +63,7 @@ const TourCardAdmin = ({ tour }) => {
 
     return (
         <div className="bg-white p-2 rounded-md relative shadow-md border border-gray-100">
-            <div className="h-[168px] flex gap-1 relative">
+            <div className="h-[168px] flex gap-1">
                 <img
                     src={
                         tourImages[0] ||
