@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { useState, useEffect, useRef } from "react";
-import mongoose from "mongoose";
 import { useCreateTourMutation } from "../../redux/api/tourApiSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
