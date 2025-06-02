@@ -20,7 +20,7 @@ export default {
       },
       gridTemplateColumns: {
         footer: "1.3fr 1fr 1fr 1fr",
-
+        three_col_custom: "48% 4% 48%",
       },
       boxShadow: {
         custom: "0 5px 15px rgba(0, 0, 0, 0.15) ",
