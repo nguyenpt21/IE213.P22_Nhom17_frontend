@@ -4,7 +4,7 @@ import StatsCards from '../../components/Dashboard/StatsCards';
 import RevenueChart from '../../components/Dashboard/RevenueChart';
 import TopProducts from '../../components/Dashboard/TopProducts';
 import RecentBookings from '../../components/Dashboard/RecentBookings';
-// import TopCustomers from '../../components/Dashboard/TopCustomers';
+import TopCustomers from '../../components/Dashboard/TopCustomers';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 const Dashboard = () => {
@@ -13,7 +13,7 @@ const Dashboard = () => {
     const [topTours, setTopTours] = useState([]);
     const [topHotels, setTopHotels] = useState([]);
     const [recentBookings, setRecentBookings] = useState([]);
-    // const [topCustomers, setTopCustomers] = useState([]);
+    const [topCustomers, setTopCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [period, setPeriod] = useState('7');
 
@@ -30,14 +30,14 @@ const Dashboard = () => {
                 toursData,
                 hotelsData,
                 bookingsData,
-                // customersData
+                customersData
             ] = await Promise.all([
                 dashboardService.getDashboardStats(period),
                 dashboardService.getRevenueChart(period),
                 dashboardService.getTopTours(3),
                 dashboardService.getTopHotels(3),
                 dashboardService.getRecentBookings(5),
-                // dashboardService.getTopCustomers(3)
+                dashboardService.getTopCustomers(3)
             ]);
 
             setStats(statsData);
@@ -45,7 +45,7 @@ const Dashboard = () => {
             setTopTours(toursData);
             setTopHotels(hotelsData);
             setRecentBookings(bookingsData);
-            // setTopCustomers(customersData);
+            setTopCustomers(customersData);
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
         } finally {
@@ -120,9 +120,9 @@ const Dashboard = () => {
                 </div>
 
                 {/* Top Customers */}
-                {/* <div className="lg:col-span-1">
+                <div className="lg:col-span-1">
                     <TopCustomers customers={topCustomers} />
-                </div> */}
+                </div>
             </div>
         </div>
     );
