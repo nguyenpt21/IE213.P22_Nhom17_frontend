@@ -162,10 +162,11 @@ const RoomTypeModal = ({
       onCancel={onCancel}
       width={"50%"}
       footer={null}
+      centered
     >
       {contextMessageHolder}
       <p className="text-[18px] font-semibold mb-3">Thêm loại phòng</p>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto max-h-[80vh]">
         <FormInput
           label={"Tên loại phòng"}
           name={"name"}

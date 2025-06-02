@@ -56,9 +56,10 @@ const RoomModal = ({
       footer={null}
       onCancel={onCancel}
       style={{top: "20px"}}
+      centered
     >
       <p className="text-[18px] font-semibold mb-1">Thêm phòng</p>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto max-h-[80vh]">
         <FormInput
           label={"Tên phòng"}
           name={"bedType"}

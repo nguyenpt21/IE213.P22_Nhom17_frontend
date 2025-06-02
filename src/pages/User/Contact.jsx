@@ -26,9 +26,9 @@ export default function Contact() {
             const childStyle = !isLast
                 ? style
                 : {
-                      ...style,
-                      borderRadius: "0 0 8px 8px",
-                  };
+                    ...style,
+                    borderRadius: "0 0 8px 8px",
+                };
 
             return {
                 key: index,
@@ -148,31 +148,13 @@ export default function Contact() {
                 <h2 className="text-4xl font-bold text-center mb-6">
                     Các câu hỏi thường gặp
                 </h2>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="">
                     <Collapse
                         accordion
                         expandIcon={({ isActive }) => (
                             <PiStarFourLight
-                                className={`w-5 h-5 ${
-                                    isActive ? "rotate-45" : "rotate-0"
-                                }`}
-                            />
-                        )}
-                        items={getItems(panelStyle, QUESTION)}
-                    >
-                        {/* {QUESTION.map((item, index) => (
-                            <Panel header={item.question} key={index}>
-                                <p className="text-gray-600">{item.answer}</p>
-                            </Panel>
-                        ))} */}
-                    </Collapse>
-                    <Collapse
-                        accordion
-                        expandIcon={({ isActive }) => (
-                            <PiStarFourLight
-                                className={`w-5 h-5 ${
-                                    isActive ? "rotate-45" : "rotate-0"
-                                }`}
+                                className={`w-5 h-5 ${isActive ? "rotate-45" : "rotate-0"
+                                    }`}
                             />
                         )}
                         items={getItems(panelStyle, QUESTION)}
