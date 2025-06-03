@@ -16,7 +16,7 @@ import ExpandableCheckbox from '../../components/ExpandableCheckbox';
 import { ROOM_FACILITIES_OPTIONS } from '../../constants/hotel';
 import { message } from 'antd';
 import { toast } from "react-toastify";
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress} from '@mui/material';
 
 const { Option } = Select;
 

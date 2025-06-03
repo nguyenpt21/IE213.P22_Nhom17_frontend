@@ -122,6 +122,7 @@ const ReviewModal = ({ visible, onCancel, onAddReview, onUpdateReview, editingRe
             onCancel={onCancel}
             width={"50%"}
             footer={null}
+            centered
         >
             {contextMessageHolder}
             <p className="text-[18px] font-semibold mb-3">Thêm đánh giá</p>

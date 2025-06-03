@@ -9,7 +9,7 @@ import SelectItem from "../../components/SelectItem";
 import { Drawer, Slider, Checkbox } from "antd";
 
 import { RiResetLeftLine } from "react-icons/ri";
-
+import { Box, CircularProgress } from "@mui/material";
 import { useGetToursQuery } from "../../redux/api/tourApiSlice";
 import TourCardAdmin from "../../components/TourCardAdmin";
 import {
@@ -17,6 +17,7 @@ import {
     DURATION_OPTIONS,
     LANGUAGE_OPTIONS,
 } from "../../constants/tour";
+
 const ManageTours = () => {
     const navigate = useNavigate();
     const sortOptionList = [
@@ -55,7 +56,11 @@ const ManageTours = () => {
         setPriceRange([0, 2000000]);
     };
 
-    const { data: tours, refetch } = useGetToursQuery({
+    const {
+        data: tours,
+        isLoading,
+        refetch,
+    } = useGetToursQuery({
         category: category?.join(","),
         languageService: language?.join(","),
         minPrice: priceRange[0],
@@ -81,6 +86,19 @@ const ManageTours = () => {
             setSearched(true);
         }
     };
+
+    if (isLoading) {
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="100vh"
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <div className="bg-softBlue min-h-screen p-4 md:p-8">

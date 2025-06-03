@@ -14,6 +14,9 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedDate } from "../../redux/features/tourDateSlice";
 import { Box, CircularProgress } from "@mui/material";
+import { useGetReviewByProductIdQuery } from "../../redux/api/reviewApiSlice";
+import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
+import { FaStar, FaStarHalf, FaRegStar } from "react-icons/fa6";
 dayjs.extend(isSameOrBefore);
 dayjs.locale("vi");
 
@@ -39,6 +42,12 @@ const TourDetails = () => {
     const selectedDate = useSelector((state) => state.tourDate.selectedDate);
 
     const [isCalendarModal, setIsCalendarModal] = useState(false);
+
+    const { data: tourRiview, isLoading: isLoadingTourReviews } =
+        useGetReviewByProductIdQuery({
+            reviewableId: params._id,
+            reviewableType: "Tour",
+        });
 
     const CalendarSelection = () => {
         const generateMonthDays = (baseMonth) => {
@@ -597,7 +606,7 @@ const TourDetails = () => {
         );
     };
 
-    if (isLoading)
+    if (isLoading || isLoadingTourReviews)
         return (
             <Box
                 display="flex"
@@ -608,9 +617,24 @@ const TourDetails = () => {
                 <CircularProgress />
             </Box>
         );
+        
+    const latestByUser = new Map();
 
+    for (const item of tourRiview.reviews) {
+        const userId = item.userId._id;
+        const existing = latestByUser.get(userId);
+
+        if (
+            !existing ||
+            new Date(item.createdAt) > new Date(existing.createdAt)
+        ) {
+            latestByUser.set(userId, item);
+        }
+    }
+
+    const latestReview = Array.from(latestByUser.values());
     return (
-        <div className="relative">
+        <div className="relative mb-20">
             <div className="bg-[#329ee5] h-[300px] w-full absolute top-0 -z-10 rounded-br-[48px]"></div>
             <div className="w-[75%] mx-auto bg-transparent">
                 <TourInformationUser tourData={data.tour}></TourInformationUser>
@@ -628,7 +652,85 @@ const TourDetails = () => {
                         ))}
                     </div>
                 </div>
+                <div className="mt-6">
+                    <p className="text-2xl font-bold">Đánh giá</p>
+                    <div className="flex mt-4 gap-4 items-center">
+                        <div className="text-3xl font-bold">
+                            {tourRiview.averageRating}
+                            <span className="text-gray-400 text-sm ">/5</span>
+                        </div>
+                        <div className=" text-yellow-400 flex items-center gap-2">
+                            <StarRating
+                                rating={tourRiview.averageRating}
+                                className={
+                                    "text-yellow-400 flex items-center gap-2"
+                                }
+                            ></StarRating>
+                        </div>
+                        <p className="text-base">
+                            Dựa trên {tourRiview.reviews.length} lượt đánh giá
+                        </p>
+                    </div>{" "}
+                    <div className="flex flex-col gap-5 mt-5">
+                        {latestReview.map((r, index) => (
+                            <div className="text-sm w-full min-h-[200px] flex gap-4 items-start rounded-lg p-4 shadow">
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        {r.userId.profilePicture ? (
+                                            <img
+                                                src={r.userId.profilePicture}
+                                                className="w-[44px] h-[44px] rounded-full"
+                                            ></img>
+                                        ) : (
+                                            <div className="w-[44px] h-[44px] rounded-full flex items-center justify-center bg-[#8dbd8b] text-gray-200">
+                                                <span>
+                                                    {r.userId.firstName[0]}{" "}
+                                                    {r.userId.lastName[0]}
+                                                </span>
+                                            </div>
+                                        )}
+
+                                        <div className="flex flex-col gap-0.5">
+                                            <p className="font-semibold">
+                                                {r.userId.firstName}{" "}
+                                                {r.userId.lastName}
+                                            </p>
+                                            <p className="text-gray-400">
+                                                {r.createdAt}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <StarRating
+                                        rating={r.rating}
+                                        className={
+                                            "text-yellow-400 flex items-center gap-2 mt-2"
+                                        }
+                                    ></StarRating>
+                                </div>
+                                <p className="">{r.comment}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
+        </div>
+    );
+};
+
+const StarRating = ({ rating, className }) => {
+    const fullStars = Math.floor(rating);
+    const hasHalf = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+
+    return (
+        <div className={className}>
+            {[...Array(fullStars)].map((_, i) => (
+                <BsStarFill key={`f-${i}`} />
+            ))}
+            {hasHalf && <BsStarHalf />}
+            {[...Array(emptyStars)].map((_, i) => (
+                <BsStar key={`e-${i}`} />
+            ))}
         </div>
     );
 };
