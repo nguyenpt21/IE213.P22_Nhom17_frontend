@@ -30,10 +30,6 @@ const HotelBooking = () => {
 
     const handleUpdateBookingStatus = async (id, bookingStatus) => {
         // console.log("Updating booking status for ID:", id, "to", bookingStatus);
-        let answer = window.confirm(
-            "Xác nhận ?"
-        );
-        if (!answer) return;
         try {
             const res = await updateStatus({ id, bookingStatus }).unwrap();
             console.log("Booking status updated successfully", res);

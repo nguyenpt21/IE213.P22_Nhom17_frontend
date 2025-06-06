@@ -1,5 +1,5 @@
 import { apiSlice } from "./apiSlice";
-import { TOUR_BOOKING_URL, PAYPAL_URL, STRIPE_URL } from "../constants";
+import { TOUR_BOOKING_URL, PAYPAL_URL, STRIPE_URL, PAYOS_URL } from "../constants";
 
 export const tourBookingSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -57,6 +57,23 @@ export const tourBookingSlice = apiSlice.injectEndpoints({
                 params,
             }),
         }),
+        createTourPayOSLink: builder.mutation({
+            query: (bookingData) => ({
+                url: `${PAYOS_URL}/create-tour-checkout-link`,
+                method: "POST",
+                body: bookingData,
+            })
+        }),
+        saveTourBooking: builder.mutation({
+            query: ({ orderCode, bookingData }) => ({
+                url: `${PAYOS_URL}/save-tour-booking`,
+                method: "POST",
+                body: {
+                    orderCode,
+                    bookingData,
+                },
+            })
+        })
     }),
 });
 
@@ -69,4 +86,6 @@ export const {
     useCancelTourBookingMutation,
     useUpdateTourBookingStatusMutation,
     useGetTourBookingsQuery,
+    useCreateTourPayOSLinkMutation,
+    useSaveTourBookingMutation,
 } = tourBookingSlice;

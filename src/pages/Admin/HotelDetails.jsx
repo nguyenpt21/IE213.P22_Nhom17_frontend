@@ -90,21 +90,29 @@ const HotelDetails = () => {
         handleCloseRoomModal();
         handleCloseModalRoomType();
     }
-    const handleDeleteRoomType = async (roomTypeId) => {
-        console.log("deleteroomtype - ", param._id, "-", roomTypeId);
+
+    const [isDeleteRoomTypeModalVisible, setDeleteRoomTypeModalVisible] = useState(false);
+    const [selectedRoomTypeId, setSelectedRoomTypeId] = useState(null);
+    const showDeleteRoomTypeModal = (roomTypeId) => {
+        setSelectedRoomTypeId(roomTypeId);
+        setDeleteRoomTypeModalVisible(true);
+    };
+    const confirmDeleteRoomType = async () => {
         try {
-            let answer = window.confirm(
-                "Bạn muốn xoá loại phòng và tất cả các phòng trong đó?"
-            );
-            if (!answer) return;
-            const res = await deleteRoomType({ hotelId: param._id, roomTypeId: roomTypeId }).unwrap();
+            const res = await deleteRoomType({
+                hotelId: param._id,
+                roomTypeId: selectedRoomTypeId,
+            }).unwrap();
             toast.success(res.message);
             await refetchHotel();
         } catch (error) {
             toast.error("Xoá loại phòng và phòng thất bại");
             console.error("Error delete room type:", error);
+        } finally {
+            setDeleteRoomTypeModalVisible(false);
+            setSelectedRoomTypeId(null);
         }
-    }
+    };
     const handleEditRoomType = (roomType, roomTypeId) => {
         setEditingRoomTypeIndex(roomTypeId);
         setEditingRoomType(roomType);
@@ -180,40 +188,34 @@ const HotelDetails = () => {
         }
         handleCloseRoomModal()
     }
-    const handleDeleteRoom = async (roomTypeId, roomType, roomId) => {
-        console.log("deleteroom - ", param._id, "-", roomTypeId, "-", roomId);
+    const [isDeleteRoomModalVisible, setDeleteRoomModalVisible] = useState(false);
+    const [selectedRoomInfo, setSelectedRoomInfo] = useState(null); // { roomTypeId, roomId, roomTypeName }
+    const showDeleteRoomModal = (roomTypeId, roomType, roomId) => {
+        setSelectedRoomInfo({
+            roomTypeId,
+            roomId,
+            roomTypeName: roomType.name,
+        });
+        setDeleteRoomModalVisible(true);
+    };
+    const confirmDeleteRoom = async () => {
         try {
-            let answer = window.confirm(
-                "Bạn chắc chắn muốn xoá phòng ?"
-            );
-            if (!answer) return;
-
-            const res = await deleteRoom({ hotelId: param._id, roomTypeId: roomTypeId, roomId: roomId }).unwrap();
+            const { roomTypeId, roomId } = selectedRoomInfo;
+            const res = await deleteRoom({
+                hotelId: param._id,
+                roomTypeId,
+                roomId,
+            }).unwrap();
             toast.success(res.message);
             await refetchHotel();
         } catch (error) {
             toast.error("Xoá phòng thất bại");
             console.error("Error delete room:", error);
+        } finally {
+            setDeleteRoomModalVisible(false);
+            setSelectedRoomInfo(null);
         }
-    }
-
-    //hotel
-    const handleDeleteHotel = async () => {
-        console.log("Xoá khách sạn - ", param._id);
-        try {
-            let answer = window.confirm(
-                "Bạn chắc chắn muốn xoá khách sạn ?"
-            );
-            if (!answer) return;
-
-            const res = await deleteHotel(param._id).unwrap();
-            toast.success(res.message);
-            navigate('/admin/manage-hotels');
-        } catch (error) {
-            toast.error("Xoá khách sạn thất bại");
-            console.error("Error delete hotel:", error);
-        }
-    }
+    };
 
     const [messageApi, contextMessageHolder] = message.useMessage();
 
@@ -356,21 +358,36 @@ const HotelDetails = () => {
 
                     {roomTypesData.map((roomType, index) => (
                         <RoomTypeCard key={index} roomType={roomType} images={hotel.img}
-                            handleEditRoomType={handleEditRoomType} handleDeleteRoomType={handleDeleteRoomType} handleOpenRoomModal={handleOpenRoomModal}
-                            handleEditRoom={handleEditRoom} handleDeleteRoom={handleDeleteRoom}
+                            handleEditRoomType={handleEditRoomType} handleDeleteRoomType={showDeleteRoomTypeModal} handleOpenRoomModal={handleOpenRoomModal}
+                            handleEditRoom={handleEditRoom} handleDeleteRoom={showDeleteRoomModal}
                         />
                     ))}
-                </div>
-                <div className='w-[85%] mx-auto mt-4 flex justify-end'>
-                    <button
-                        className='bg-red-500 text-white py-2 px-4 rounded-lg text-[16px] font-semibold'
-                        onClick={() => {
-                            handleDeleteHotel(param._id);
-                        }}
+
+                    <Modal
+                        title="Xác nhận xoá loại phòng"
+                        open={isDeleteRoomTypeModalVisible}
+                        onOk={confirmDeleteRoomType}
+                        onCancel={() => setDeleteRoomTypeModalVisible(false)}
+                        okText="Xoá"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
                     >
-                        Xoá khách sạn
-                    </button>
+                        <p>Bạn muốn xoá loại phòng và tất cả các phòng trong đó?</p>
+                    </Modal>
+                    <Modal
+                        title="Xác nhận xoá phòng"
+                        open={isDeleteRoomModalVisible}
+                        onOk={confirmDeleteRoom}
+                        onCancel={() => setDeleteRoomModalVisible(false)}
+                        okText="Xoá"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                    >
+                        <p>Bạn có chắc chắn muốn xoá phòng này trong loại phòng "{selectedRoomInfo?.roomTypeName}"?</p>
+                    </Modal>
                 </div>
+                
+
             </div>
         </div>
     );

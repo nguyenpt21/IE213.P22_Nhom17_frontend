@@ -28,6 +28,7 @@ import {
     useCreateBookingMutation,
     useCreateHotelCheckoutSessionMutation,
     useCreateHotelPaypalOrderMutation,
+    useCreateHotelPayOSLinkMutation
 } from "../../redux/api/hotelBookingApiSlice";
 dayjs.extend(customParseFormat);
 dayjs.locale("vi");
@@ -40,14 +41,9 @@ const paymentOptions = [
     },
     { id: "stripe", label: "Stripe" },
     {
-        id: "atm",
-        label: "ATM by MoMo",
+        id: "qr",
+        label: "Chuyển khoản qua QR",
         description: "Hoàn tiền không áp dụng cho lựa chọn thanh toán của bạn",
-    },
-    {
-        id: "card",
-        label: "Thẻ Credit/Debit",
-        cards: [{ id: "new-card", label: "Thêm thẻ mới", type: "new" }],
     },
 ];
 
@@ -124,6 +120,8 @@ const HotelBooking = () => {
         useCreateHotelPaypalOrderMutation();
     const [createStripeCheckout, { isLoading: loadingCreateStripe }] =
         useCreateHotelCheckoutSessionMutation();
+    const [createPayOSCheckout, { isLoading: loadingCreatePayOS }] =
+        useCreateHotelPayOSLinkMutation();
 
     const handlePayment = async (e) => {
         e.preventDefault();
@@ -189,6 +187,33 @@ const HotelBooking = () => {
             } catch (err) {
                 console.error("Stripe redirect error", err);
             }
+        } else if (selectedMethod === 'qr') {
+            try {
+                const res = await createPayOSCheckout({
+                    hotelName: hotel.name,
+                    location,
+                    roomTypeName: roomType.name,
+                    roomTypeImg: roomType.img[0],
+                    userId: user?._id,
+                    hotelId: param._id,
+                    roomTypeId,
+                    roomId,
+                    checkin: checkIn,
+                    checkout: checkOut,
+                    numGuests: adults,
+                    numRooms: rooms,
+                    phone: getValues("phone"),
+                    name: getValues("name"),
+                    email: getValues("email"),
+                    paymentMethod: selectedMethod,
+                    totalPrice: getRoomPrice(room, checkIn, checkOut, rooms),
+                }).unwrap();
+
+                window.location.href = res.checkoutUrl
+
+            } catch (error) {
+                console.error("Payos redirect error", error)
+            }
         }
     };
 
@@ -205,8 +230,7 @@ const HotelBooking = () => {
                                 className="mr-2 text-[14px] hover:text-slate-400 duration-300"
                                 onClick={() =>
                                     navigate(
-                                        `/hotels/${
-                                            param._id
+                                        `/hotels/${param._id
                                         }?${searchParams.toString()}`
                                     )
                                 }
@@ -232,7 +256,7 @@ const HotelBooking = () => {
                                         register={register}
                                         errors={errors}
                                         placeholder={"Nhập họ tên"}
-                                        // validationRules = {{required: "Tên là bắt buộc"}}
+                                    // validationRules = {{required: "Tên là bắt buộc"}}
                                     />
                                 </div>
                                 <div className="bg-white px-5 py-7 rounded-3xl mt-4">
@@ -245,7 +269,7 @@ const HotelBooking = () => {
                                         register={register}
                                         errors={errors}
                                         placeholder={"Nhập địa chỉ email"}
-                                        // validationRules = {{required: "Email là bắt buộc"}}
+                                    // validationRules = {{required: "Email là bắt buộc"}}
                                     />
                                     <FormInput
                                         className="mt-4"
@@ -254,7 +278,7 @@ const HotelBooking = () => {
                                         register={register}
                                         errors={errors}
                                         placeholder={"Nhập số điện thoại"}
-                                        // validationRules = {{required: "Số điện thoại là bắt buộc"}}
+                                    // validationRules = {{required: "Số điện thoại là bắt buộc"}}
                                     />
                                 </div>
                                 <div className="bg-white px-5 py-7 rounded-3xl mt-4">
@@ -553,7 +577,7 @@ const RoomModal = ({
                     <div>
                         {review == 1 &&
                             (room.cancellationPolicy.refund ===
-                            "Không hoàn tiền" ? (
+                                "Không hoàn tiền" ? (
                                 <div className="mb-2">
                                     <p className="font-semibold">
                                         {room.cancellationPolicy.refund}
@@ -564,7 +588,7 @@ const RoomModal = ({
                                     </p>
                                 </div>
                             ) : room.cancellationPolicy.refund ===
-                              "Hủy miễn phí" ? (
+                                "Hủy miễn phí" ? (
                                 <div className="mb-2">
                                     <p className="font-semibold">
                                         Miễn phí huỷ (Thời gian có hạn)
@@ -637,9 +661,9 @@ const RoomModal = ({
                                             <span className="font-medium">
                                                 {Math.round(
                                                     room.price *
-                                                        (room.cancellationPolicy
-                                                            .percentBeforeDay /
-                                                            100)
+                                                    (room.cancellationPolicy
+                                                        .percentBeforeDay /
+                                                        100)
                                                 ).toLocaleString("vi-VN")}
                                                 ₫
                                             </span>
@@ -650,9 +674,9 @@ const RoomModal = ({
                                             <span className="font-medium">
                                                 {Math.round(
                                                     room.price *
-                                                        (room.cancellationPolicy
-                                                            .percentAfterDay /
-                                                            100)
+                                                    (room.cancellationPolicy
+                                                        .percentAfterDay /
+                                                        100)
                                                 ).toLocaleString("vi-VN")}
                                                 ₫
                                             </span>

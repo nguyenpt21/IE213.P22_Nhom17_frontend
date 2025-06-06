@@ -1,5 +1,5 @@
-import React from "react";
-import { Tabs } from "antd";
+import React, {useState} from "react";
+import { Tabs, Modal } from "antd";
 import { CheckCircleIcon, XCircleIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { IoReceiptOutline } from "react-icons/io5";
 import { FaBuilding } from "react-icons/fa6";
@@ -118,16 +118,23 @@ const TourBookingsTab = () => {
   const { data: bookings = [], isLoading, refetch } = useGetMyTourBookingsQuery();
   const [cancelBooking] = useCancelTourBookingMutation();
 
-  const handleCancel = async (id) => {
-    const confirm = window.confirm("Xác nhận huỷ?");
-    if (!confirm) return;
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const showCancelModal = (id) => {
+    setSelectedBookingId(id);
+    setIsCancelModalOpen(true);
+  };
+  const confirmCancel = async () => {
     try {
-      await cancelBooking(id).unwrap();
+      await cancelBooking(selectedBookingId).unwrap();
       toast.success("Đã huỷ đơn hàng thành công!");
       refetch();
     } catch (err) {
       console.error(err);
       toast.error("Huỷ đơn hàng thất bại!");
+    } finally {
+      setIsCancelModalOpen(false);
+      setSelectedBookingId(null);
     }
   };
 
@@ -177,13 +184,24 @@ const TourBookingsTab = () => {
           {booking.bookingStatus === "pending" && (
             <div>
               <button
-                onClick={() => handleCancel(booking._id)}
+                onClick={() => showCancelModal(booking._id)}
                 className="text-[14px] font-medium mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors duration-200"
               >
                 Huỷ đơn hàng
               </button>
             </div>
           )}
+          <Modal
+            title="Xác nhận huỷ đơn hàng"
+            open={isCancelModalOpen}
+            onOk={confirmCancel}
+            onCancel={() => setIsCancelModalOpen(false)}
+            okText="Huỷ đơn"
+            cancelText="Đóng"
+            okButtonProps={{ danger: true }}
+          >
+            <p>Bạn có chắc chắn muốn huỷ đơn hàng này?</p>
+          </Modal>
         </div>
       </div>
       <div className="rounded-xl overflow-hidden h-[120px] w-[180px]">

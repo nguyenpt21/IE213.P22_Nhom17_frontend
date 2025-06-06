@@ -14,6 +14,7 @@ import {
     useCapturePaypalOrderAndSaveTourBookingMutation,
     useCreatePaypalOrderMutation,
     useCreateTourCheckoutSessionMutation,
+    useCreateTourPayOSLinkMutation
 } from "../../redux/api/tourBookingApiSlice";
 dayjs.extend(customParseFormat);
 dayjs.locale("vi");
@@ -26,6 +27,11 @@ const paymentOptions = [
             "Có thể phát sinh thêm phí nếu thanh toán bằng PayPal. Hãy liên hệ ngân hàng của bạn để cập nhật thêm thông tin.",
     },
     { id: "stripe", label: "Stripe" },
+    {
+        id: "qr",
+        label: "Chuyển khoản qua QR",
+        description: "Hoàn tiền không áp dụng cho lựa chọn thanh toán của bạn",
+    },
 ];
 
 const TourBooking = () => {
@@ -81,6 +87,9 @@ const TourBooking = () => {
 
     const [createStripeCheckout, { isLoading: loadingCreateStripe }] =
         useCreateTourCheckoutSessionMutation();
+
+    const [createPayOSCheckout, { isLoading: loadingCreatePayOS }] =
+        useCreateTourPayOSLinkMutation();
     const { user } = useSelector((state) => state.auth);
 
     const handlePayment = async () => {
@@ -133,6 +142,28 @@ const TourBooking = () => {
             } catch (err) {
                 console.error("Stripe redirect error", err);
             }
+        } else if (selectedMethod === 'qr') {
+            try {
+                const res = await createPayOSCheckout({
+                    userId: user?._id,
+                    tourId: tour.id,
+                    tourName: tour.name,
+                    tourImg: tour.img,
+                    ticketName: ticket.title,
+                    ticketId: ticket._id,
+                    quantities,
+                    useDate: selectedDate,
+                    phone: getValues("phone"),
+                    name: getValues("name"),
+                    email: getValues("email"),
+                    paymentMethod: selectedMethod,
+                    totalPrice: totalPrice,
+                }).unwrap();
+                
+                window.location.href = res.checkoutUrl
+            } catch (error) {
+                console.error("Payos redirect error", error)
+            }
         }
     };
 
@@ -144,7 +175,7 @@ const TourBooking = () => {
                 <div className="flex items-center">
                     <FaChevronLeft
                         className="mr-2 text-[14px] hover:text-slate-400 duration-300"
-                        onClick={() => {}}
+                        onClick={() => { }}
                     />
                     <p className="font-medium text-[16px]">Quay lại</p>
                 </div>
@@ -163,7 +194,7 @@ const TourBooking = () => {
                                         register={register}
                                         errors={errors}
                                         placeholder={"Nhập họ tên"}
-                                        // validationRules = {{required: "Tên là bắt buộc"}}
+                                    // validationRules = {{required: "Tên là bắt buộc"}}
                                     />
 
                                     <div className="flex gap-2 mt-4">
@@ -174,7 +205,7 @@ const TourBooking = () => {
                                             errors={errors}
                                             placeholder={"Nhập địa chỉ email"}
                                             className="flex-1"
-                                            // validationRules = {{required: "Email là bắt buộc"}}
+                                        // validationRules = {{required: "Email là bắt buộc"}}
                                         />
                                         <FormInput
                                             label={"Số điện thoại"}
@@ -183,7 +214,7 @@ const TourBooking = () => {
                                             errors={errors}
                                             placeholder={"Nhập số điện thoại"}
                                             className="flex-1"
-                                            // validationRules = {{required: "Số điện thoại là bắt buộc"}}
+                                        // validationRules = {{required: "Số điện thoại là bắt buộc"}}
                                         />
                                     </div>
                                 </div>
@@ -308,10 +339,9 @@ const TourBooking = () => {
                                             {selectedDate.isSame(dayjs())
                                                 ? "Hôm nay"
                                                 : selectedDate.day() === 0
-                                                ? "Chủ Nhật"
-                                                : `Thứ ${
-                                                      selectedDate.day() + 1
-                                                  }`}
+                                                    ? "Chủ Nhật"
+                                                    : `Thứ ${selectedDate.day() + 1
+                                                    }`}
                                         </span>
                                         <span className="font-semibold">
                                             , {selectedDate.format("D [thg] M")}
@@ -467,11 +497,10 @@ const TicketModal = ({ ticket }) => {
                                                 (itemRefs.current[idx] = el)
                                             }
                                             onClick={() => handleClick(idx)}
-                                            className={` font-medium ${
-                                                idx === activeIndex
+                                            className={` font-medium ${idx === activeIndex
                                                     ? "text-primary"
                                                     : "text-gray-500"
-                                            }`}
+                                                }`}
                                         >
                                             {label}
                                         </button>

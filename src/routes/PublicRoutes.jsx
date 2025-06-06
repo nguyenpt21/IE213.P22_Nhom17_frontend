@@ -17,6 +17,8 @@ import HotelCheckoutSuccess from "../components/HotelCheckoutSuccess";
 import CheckoutStripeSuccess from "../components/CheckoutStripeSuccess";
 import About from "../pages/User/About"
 import Contact from "../pages/User/Contact";
+import HotelCheckOutPayOSSuccess from "../components/HotelCheckOutPayOSSuccess";
+import TourCheckOutPayOSSuccess from "../components/TourCheckOutPayOSSuccess";
 
 const PublicRoutes = () => {
     const { user } = useSelector((state) => state.auth);
@@ -77,6 +79,16 @@ const PublicRoutes = () => {
                 element={< CheckoutStripeSuccess />}
             ></Route>
             <Route path="hotels/:_id/pay" element={<HotelBooking />} />
+            
+            <Route
+                path="hotel-checkout-payos-success"
+                element={<HotelCheckOutPayOSSuccess/>}
+            />
+            <Route
+                path="/tour-checkout-payos-success"
+                element={<TourCheckOutPayOSSuccess/>}
+            />
+
         </Routes>
     );
 };
