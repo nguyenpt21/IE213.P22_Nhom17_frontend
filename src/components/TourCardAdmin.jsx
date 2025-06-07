@@ -62,7 +62,7 @@ const TourCardAdmin = ({ tour }) => {
     };
 
     return (
-        <div className="bg-white p-2 rounded-md relative shadow-md border border-gray-100">
+        <div className="bg-white p-2 rounded-md relative shadow-md border flex flex-col border-gray-100">
             <div className="h-[168px] flex gap-1 relative">
                 <img
                     src={
@@ -97,7 +97,7 @@ const TourCardAdmin = ({ tour }) => {
                     />
                 </div>
             </div>
-            <div className="p-2 space-y-1 flex flex-col">
+            <div className="p-2 flex flex-1 gap-1 flex-col">
                 <p className="text-gray-500 text-xs">
                     Ngày tạo: {new Date(tour.createdAt).toLocaleString()}
                 </p>

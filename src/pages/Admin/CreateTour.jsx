@@ -609,7 +609,7 @@ const CreateTour = () => {
                                         </p>
                                         <span className="text-lg font-semibold text-orange-500">
                                             {" "}
-                                            {ticket.prices[0].price.toLocaleString("vi-VN")} VND
+                                            {Number(ticket.prices[0].price).toLocaleString("vi-VN")} VND
                                         </span>
                                     </div>
                                 ))}

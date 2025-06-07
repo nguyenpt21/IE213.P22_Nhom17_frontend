@@ -39,7 +39,7 @@ const CityCard = ({ city, onEdit, onDelete, isDeleting }) => {
 
   return (
     <div 
-      className='p-3 rounded-xl shadow-md border border-gray-100 h-[390px] relative hover:shadow-xl duration-300 bg-white flex flex-col cursor-pointer' 
+      className='p-3 rounded-xl shadow-md border border-gray-100 h-[360px] relative hover:shadow-xl duration-300 bg-white flex flex-col cursor-pointer' 
       onClick={handleCardClick}
     >
       <div className="w-full h-[160px] grid grid-cols-3 gap-1 rounded-xl overflow-hidden mb-2">
@@ -76,12 +76,12 @@ const CityCard = ({ city, onEdit, onDelete, isDeleting }) => {
               {address}
             </div>
           )}
-          <p className='text-[14px] text-gray-600 line-clamp-2 mb-1'>{city.description}</p>
+          <p className='text-[14px] text-gray-600 line-clamp-2'>{city.description}</p>
         </div>
         {city.popularPlace && city.popularPlace.length > 0 && (
           <div className="mt-1">
             <span className="font-medium text-[13px]">Địa điểm nổi bật:</span>
-            <ul className="pl-4 text-[13px] text-gray-500">
+            <ul className="pl-4 text-[13px] text-gray-500 flex gap-2">
               {city.popularPlace.slice(0, 2).map((place, idx) => (
                 <li key={idx}>{place.name}</li>
               ))}
@@ -106,7 +106,7 @@ const CityCard = ({ city, onEdit, onDelete, isDeleting }) => {
         {showMenu && (
           <div
             ref={menuRef}
-            className="absolute z-50 top-full right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 py-2 w-48 flex flex-col animate-fadeIn menu-dropdown"
+            className="absolute z-50 top-full right-0 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden w-48 flex flex-col animate-fadeIn menu-dropdown"
           >
             <button
               onClick={(e) => { 
@@ -114,10 +114,10 @@ const CityCard = ({ city, onEdit, onDelete, isDeleting }) => {
                 setShowMenu(false); 
                 onEdit(); 
               }}
-              className="flex items-center justify-center gap-2 px-4 py-3 hover:bg-gray-50 text-gray-700 text-[16px] font-medium border-b border-gray-100"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700 text-[16px] font-medium border-b border-gray-100"
             >
               <MdVisibility className="text-[20px]" />
-              <span className="leading-tight text-[15px] text-center whitespace-nowrap">
+              <span className="leading-tight text-[15px] whitespace-nowrap">
                 Xem và sửa
               </span>
             </button>
@@ -127,7 +127,7 @@ const CityCard = ({ city, onEdit, onDelete, isDeleting }) => {
                 setShowMenu(false); 
                 onDelete(); 
               }}
-              className="flex items-center justify-center gap-2 px-4 py-3 hover:bg-red-50 text-red-500 text-[16px] font-semibold"
+              className="flex items-center  gap-2 px-4 py-2 hover:bg-red-50 text-red-500 text-[16px] font-semibold"
               disabled={isDeleting}
             >
               <MdDelete className="text-[20px]" />

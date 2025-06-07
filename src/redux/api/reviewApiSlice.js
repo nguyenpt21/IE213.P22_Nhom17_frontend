@@ -7,7 +7,7 @@ export const reviewApiSlice = apiSlice.injectEndpoints({
             query: (userId) => ({
                 url: `${REVIEW_URL}/order-can-review`,
                 params: { userId },
-            })
+            }),
         }),
         getTourBookingCanReview: builder.query({
             query: (userId) => ({
@@ -47,6 +47,12 @@ export const reviewApiSlice = apiSlice.injectEndpoints({
                 params: { reviewableId, reviewableType },
             }),
         }),
+        getReviewByCity: builder.query({
+            query: ({ cityId }) => ({
+                url: `${REVIEW_URL}/review-city`,
+                params: { cityId },
+            }),
+        }),
     }),
 });
 
@@ -58,4 +64,5 @@ export const {
     useDeleteReviewMutation,
     useGetMyReviewsQuery,
     useGetReviewByProductIdQuery,
+    useGetReviewByCityQuery,
 } = reviewApiSlice;
