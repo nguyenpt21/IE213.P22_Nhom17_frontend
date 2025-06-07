@@ -26,6 +26,7 @@ const Chat = () => {
                 setAdminId(admin[0]._id);
                 dispatch(setSelectedUser(admin[0]));
                 try {
+                    console.log("MarkMessagesAsRead")
                     const res = await markSent(admin[0]._id);
                     console.log(res)
                 } catch (error) {

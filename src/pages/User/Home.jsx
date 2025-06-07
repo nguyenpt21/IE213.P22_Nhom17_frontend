@@ -41,7 +41,7 @@ const Home = () => {
             dispatch(setUsers(admin));
         }
     }, [admin]);
-    console.log(users);
+    console.log("unread: ", unreadCount);
 
     const responsivePromotion = {
         desktop: {
