@@ -41,7 +41,7 @@ const Home = () => {
             dispatch(setUsers(admin));
         }
     }, [admin]);
-    console.log(users);
+    console.log("unread: ", unreadCount);
 
     const responsivePromotion = {
         desktop: {
@@ -84,7 +84,7 @@ const Home = () => {
             label: (
                 <div
                     className="flex items-center min-w-[150px] text-base"
-                    onClick={() => navigate(`/user/customer-suppor`)}
+                    onClick={() => navigate(`/user/customer-support`)}
                 >
                     Chat với nhân viên
                 </div>

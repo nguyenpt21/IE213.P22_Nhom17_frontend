@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaMoneyBillWave, FaHotel, FaUmbrellaBeach, FaUser, FaCity } from "react-icons/fa";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
@@ -17,11 +17,19 @@ const AdminLayout = () => {
     const { data: users } = useGetUserToChatQuery(undefined, {
         refetchOnMountOrArgChange: true,
     });
-    const hasUnreadMessages =
-        Object.entries(unreadCount).some(
-            ([userId, count]) => userId !== userInfo._id && count > 0
-        ) ||
-        (users && users.some((user) => user._id !== userInfo._id && user.unreadCount > 0));
+    // const hasUnreadMessages =
+    //     Object.entries(unreadCount).some(
+    //         ([userId, count]) => userId !== userInfo._id && count > 0
+    //     ) ||
+    //     (users && users.some((user) => user._id !== userInfo._id && user.unreadCount > 0));
+    const hasUnreadMessages = useMemo(() => {
+        return (
+            Object.entries(unreadCount).some(
+                ([userId, count]) => userId !== userInfo._id && count > 0
+            ) ||
+            (users && users.some((user) => user._id !== userInfo._id && user.unreadCount > 0))
+        );
+    }, [unreadCount]);
     useEffect(() => {
         const socket = connectSocket(userInfo._id, userInfo.role);
         socket.on("newMessage", (newMessage) => {
@@ -100,9 +108,8 @@ const AdminLayout = () => {
     return (
         <div className="flex">
             <div
-                className={`h-screen  fixed left-0 top-0 text-[#1a202e] transition-all duration-300 ${
-                    isCollapsed ? "w-16" : "w-[256px]"
-                }`}
+                className={`h-screen  fixed left-0 top-0 text-[#1a202e] transition-all duration-300 ${isCollapsed ? "w-16" : "w-[256px]"
+                    }`}
             >
                 <div className="py-4 flex items-center justify-center">
                     {!isCollapsed && <h1>Vagabond</h1>}
@@ -147,9 +154,8 @@ const AdminLayout = () => {
                                                         isDropdownOpen ? null : item.title
                                                     )
                                                 }
-                                                className={`flex justify-between items-center w-full h-12 px-4 rounded-lg hover:bg-[#f2f2fc] ${
-                                                    isDropdownOpen && isActive ? "bg-[#f2f2fc]" : ""
-                                                }`}
+                                                className={`flex justify-between items-center w-full h-12 px-4 rounded-lg hover:bg-[#f2f2fc] ${isDropdownOpen && isActive ? "bg-[#f2f2fc]" : ""
+                                                    }`}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-5 h-5 flex items-center justify-center">
@@ -159,9 +165,8 @@ const AdminLayout = () => {
                                                 </div>
                                                 {!isCollapsed && (
                                                     <MdKeyboardArrowRight
-                                                        className={`transition-transform duration-300 text-[18px] ${
-                                                            isDropdownOpen ? "rotate-90" : ""
-                                                        }`}
+                                                        className={`transition-transform duration-300 text-[18px] ${isDropdownOpen ? "rotate-90" : ""
+                                                            }`}
                                                     />
                                                 )}
                                             </button>
@@ -172,11 +177,10 @@ const AdminLayout = () => {
                                                         <li key={subIdx}>
                                                             <Link
                                                                 to={sub.to}
-                                                                className={`block  pl-10 py-2 my-1 rounded hover:bg-[#f2f2fc] ${
-                                                                    location.pathname === sub.to
+                                                                className={`block  pl-10 py-2 my-1 rounded hover:bg-[#f2f2fc] ${location.pathname === sub.to
                                                                         ? "bg-[#f2f2fc]"
                                                                         : "text-gray-700"
-                                                                }`}
+                                                                    }`}
                                                             >
                                                                 {sub.title}
                                                             </Link>
@@ -188,9 +192,8 @@ const AdminLayout = () => {
                                     ) : (
                                         <Link
                                             to={item.to}
-                                            className={`flex gap-3 items-center h-12 px-4 hover:bg-[#f2f2fc] rounded-lg ${
-                                                isActive ? "bg-[#f2f2fc]" : ""
-                                            }`}
+                                            className={`flex gap-3 items-center h-12 px-4 hover:bg-[#f2f2fc] rounded-lg ${isActive ? "bg-[#f2f2fc]" : ""
+                                                }`}
                                         >
                                             <div className="flex items-center gap-3">
                                                 <div className="w-5 h-5 flex items-center justify-center">

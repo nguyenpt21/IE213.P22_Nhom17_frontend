@@ -224,7 +224,7 @@ const ManageHotels = () => {
                                         <p className='font-semibold text-[16px]'>Kết quả tìm kiếm</p>
                                         <div className='grid grid-cols-3 gap-3'>
                                             {filteredResults.map((hotel, index) => (
-                                                <HotelCard key={index} hotel={hotel} handleDeleteHotel={handleDeleteHotel} />
+                                                <HotelCard key={index} hotel={hotel} />
                                             ))}
                                         </div>
                                     </>

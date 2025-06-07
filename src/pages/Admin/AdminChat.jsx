@@ -42,6 +42,7 @@ const AdminChat = () => {
         if (selectedUser) {
             try {
                 dispatch(setSelectedUser(selectedUser));
+                console.log("handleMarkMessagesAsRead")
                 const res = await markSent(selectedUser._id);
                 console.log(res);
             } catch (error) {

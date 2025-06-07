@@ -59,7 +59,10 @@ const ChatContainer = ({ onClick }) => {
                 >
                     <ChatHeader />
 
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div
+                        className="flex-1 overflow-y-auto p-4 space-y-4"
+                        onClick={onClick}
+                    >
                         {msg?.map((message) => {
                             const isMine = message.senderId === user._id;
                             const time = new Date(message.createdAt).toLocaleString([], {
