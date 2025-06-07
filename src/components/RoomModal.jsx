@@ -77,7 +77,7 @@ const RoomModal = ({
           register={register}
           errors={errors}
           placeholder={"Nhập tên phòng"}
-          // validationRules={{required: "Tên phòng là bắt buộc"}}
+          validationRules={{required: "Tên phòng là bắt buộc"}}
         />
         
         <FormSelect
@@ -86,7 +86,7 @@ const RoomModal = ({
           control={control}
           options={BREAKFAST_OPTIONS}
           placeholder={"Chọn dịch vụ bữa sáng"}
-          // validationRules={{required: "Dịch vụ bữa sáng là bắt buộc"}}
+          validationRules={{required: "Dịch vụ bữa sáng là bắt buộc"}}
           errors={errors}
         />
 
@@ -97,7 +97,7 @@ const RoomModal = ({
           register={register}
           errors={errors}
           placeholder={"Nhập số khách tối đa"}
-          // validationRules={{required: "Số khách là bắt buộc"}}
+          validationRules={{required: "Số khách là bắt buộc"}}
         />
 
         <FormInput
@@ -107,7 +107,7 @@ const RoomModal = ({
           register={register}
           errors={errors}
           placeholder={"Nhập số phòng tối đa"}
-          // validationRules={{required: "Số phòng là bắt buộc"}}
+          validationRules={{required: "Số phòng là bắt buộc"}}
         />
 
         <FormInput
@@ -117,7 +117,7 @@ const RoomModal = ({
           register={register}
           errors={errors}
           placeholder={"Nhập giá phòng"}
-          // validationRules={{required: "Giá phòng là bắt buộc"}}
+          validationRules={{required: "Giá phòng là bắt buộc"}}
         />
 
         <p className="text-[16px] font-semibold mb-2 mt-5">

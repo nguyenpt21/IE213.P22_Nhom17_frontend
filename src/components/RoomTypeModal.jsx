@@ -186,7 +186,7 @@ const RoomTypeModal = ({
           errors={errors}
           placeholder={"Nhập tên loại phòng"}
           className="mb-3"
-        // validationRules = {{required: "Tên là bắt buộc"}}
+          validationRules = {{required: "Tên là bắt buộc"}}
         />
         <FormInput
           label={"Diện tích (m²)"}
@@ -196,7 +196,7 @@ const RoomTypeModal = ({
           errors={errors}
           placeholder={"Nhập diện tích phòng"}
           className="mb-3"
-        // validationRules = {{required: "Diện tích là bắt buộc"}}
+          validationRules = {{required: "Diện tích là bắt buộc"}}
         />
         <FormSelect
           label={"Hướng phòng"}
@@ -216,7 +216,7 @@ const RoomTypeModal = ({
           <Controller
             name="roomFacilities"
             control={control}
-            // rules={{ required: "Cơ sở vật chất là bắt buộc" }}
+            rules={{ required: "Cơ sở vật chất là bắt buộc" }}
             render={({ field }) => (
               <TreeSelect
                 {...field}
