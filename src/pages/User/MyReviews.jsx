@@ -8,7 +8,7 @@ import {
     useGetTourBookingCanReviewQuery,
     useUpdateReviewMutation,
 } from "../../redux/api/reviewApiSlice";
-import { Tabs, message } from "antd";
+import { Tabs, message, Modal } from "antd";
 import { FaRegCommentDots } from "react-icons/fa";
 import { CLOUDINARY_BASE_URL } from "../../constants/hotel";
 import dayjs from "dayjs";
@@ -146,17 +146,24 @@ const ReviewedTab = () => {
             handleCloseModal();
         };
 
-        const handleDeleteReview = async (reviewId) => {
-            const confirm = window.confirm("Xác nhận xoá?");
-            if (!confirm) return;
+        const [isDeleteReviewModalVisible, setDeleteReviewModalVisible] = useState(false);
+        const [selectedReviewId, setSelectedReviewId] = useState(null);
+        const showDeleteReviewModal = (reviewId) => {
+            setSelectedReviewId(reviewId);
+            setDeleteReviewModalVisible(true);
+        };
+        const confirmDeleteReview = async () => {
             try {
-                const res = await deleteReview(reviewId).unwrap();
+                const res = await deleteReview(selectedReviewId).unwrap();
                 console.log("Review deleted successfully:", res);
                 toast.success("Xoá đánh giá thành công");
                 refetch();
             } catch (error) {
                 console.error("Error deleting review:", error);
                 toast.error("Xoá đánh giá thất bại");
+            } finally {
+                setDeleteReviewModalVisible(false);
+                setSelectedReviewId(null);
             }
         };
 
@@ -184,7 +191,7 @@ const ReviewedTab = () => {
                         <FaEdit className="text-[16px]" />
                     </button>
                     <button
-                        onClick={() => handleDeleteReview(review._id)}
+                        onClick={() => showDeleteReviewModal(review._id)}
                         className="hover:text-red-500 transition-colors"
                     >
                         <FaTrash />
@@ -197,6 +204,17 @@ const ReviewedTab = () => {
                         editingReview={editingReview}
                         key={modalKey}
                     />
+                    <Modal
+                        title="Xác nhận xoá đánh giá"
+                        open={isDeleteReviewModalVisible}
+                        onOk={confirmDeleteReview}
+                        onCancel={() => setDeleteReviewModalVisible(false)}
+                        okText="Xoá"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                    >
+                        <p>Bạn có chắc chắn muốn xoá đánh giá này?</p>
+                    </Modal>
                 </div>
 
                 <div className="flex-1">
@@ -231,8 +249,8 @@ const ReviewedTab = () => {
                         {review.rating >= 4
                             ? "Tuyệt vời"
                             : review.rating >= 3
-                            ? "Tốt"
-                            : "Trung bình"}
+                                ? "Tốt"
+                                : "Trung bình"}
                     </p>
 
                     <p className="text-gray-600 text-[16px]">

@@ -3,7 +3,7 @@ import { IoSearch } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useDeleteHotelMutation, useGetFacilitiesQuery, useGetHotelsQuery, useGetRoomTypesQuery } from '../../redux/api/hotelApiSlice';
 import { FaPlus } from "react-icons/fa6";
-import { Select, Pagination } from "antd";
+import { Select, Pagination, Modal } from "antd";
 import ImageGalleryFromCloudinary from '../../components/ImageGalleryFromCloudinary';
 import { MdRoom } from "react-icons/md";
 import { LuCircleDollarSign } from "react-icons/lu";
@@ -16,7 +16,7 @@ import ExpandableCheckbox from '../../components/ExpandableCheckbox';
 import { ROOM_FACILITIES_OPTIONS } from '../../constants/hotel';
 import { message } from 'antd';
 import { toast } from "react-toastify";
-import { Box, CircularProgress} from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 
 const { Option } = Select;
 
@@ -51,7 +51,7 @@ const ManageHotels = () => {
     };
 
     const { data: facilitiesData, isLoading: isFacilitiesLoading } = useGetFacilitiesQuery();
-    const [deleteHotel, { isLoading: isDeletingHotel }] = useDeleteHotelMutation();
+
 
     const handleFacilitiesFilter = (selectedFacilities) => {
         setFcFilter(selectedFacilities);
@@ -88,37 +88,6 @@ const ManageHotels = () => {
         }
     };
 
-    const handleDeleteHotel = async (hotelId) => {
-        console.log("Xoá khách sạn - ", hotelId);
-        try {
-            let answer = window.confirm(
-                "Bạn chắc chắn muốn xoá khách sạn ?"
-            );
-            if (!answer) return;
-
-            const res = await deleteHotel(hotelId).unwrap();
-            toast.success(res.message);
-            refetch();
-        } catch (error) {
-            toast.error("Xoá khách sạn thất bại");
-            console.error("Error delete hotel:", error);
-        }
-    }
-
-    const [messageApi, contextMessageHolder] = message.useMessage();
-    useEffect(() => {
-        if (isDeletingHotel) {
-            messageApi.open({
-                key: 'deleteHotel',
-                type: 'loading',
-                content: 'Đang xoá...',
-                duration: 0,
-            });
-        } else {
-            messageApi.destroy('deleteHotel');
-        }
-    }, [isDeletingHotel]);
-
     if ((isLoading || isFacilitiesLoading)) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -128,10 +97,10 @@ const ManageHotels = () => {
     }
 
     // console.log(priceRange[0], priceRange[1], fcFilter, fcRoomFilter, sort);
+    console.log(hotels)
     return (
         <div>
             <div className='bg-softBlue min-h-screen p-4 md:p-8'>
-                {contextMessageHolder}
                 <div className='mx-auto'>
                     <div className='flex items-center'>
                         <p className='flex-1 font-semibold text-[20px] md:text-[24px]'>Tất cả khách sạn</p>
@@ -266,11 +235,11 @@ const ManageHotels = () => {
                                 <div>
                                     <div className='grid grid-cols-3 gap-3'>
                                         {hotels?.data?.map((hotel, index) => (
-                                            <HotelCard key={index} hotel={hotel} handleDeleteHotel={handleDeleteHotel} />
+                                            <HotelCard key={index} hotel={hotel} refetch={refetch}/>
                                         ))}
                                     </div>
                                     <Pagination
-                                        total={hotels?.totalPages}
+                                        total={hotels?.totalHotels}
                                         align='end'
                                         style={{
                                             marginTop: "20px",
@@ -279,6 +248,7 @@ const ManageHotels = () => {
                                         current={page}
                                         onChange={handleChangePage}
                                     />
+
                                 </div>
                             )}
                         </div>
@@ -289,16 +259,46 @@ const ManageHotels = () => {
     );
 };
 
-const HotelCard = ({ hotel, handleDeleteHotel }) => {
+const HotelCard = ({ hotel, refetch }) => {
     const imgs = hotel.img;
     const { data: roomTypes = [], isLoading } = useGetRoomTypesQuery(hotel._id);
     const minPrice = Math.min(
         ...roomTypes.flatMap(roomType => roomType.rooms.map(room => room.price))
     );
     const navigate = useNavigate();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [deleteHotel, { isLoading: isDeletingHotel }] = useDeleteHotelMutation();
+
+    const handleDeleteHotel = async (hotelId) => {
+        console.log("Xoá khách sạn - ", hotelId);
+        try {
+            const res = await deleteHotel(hotelId).unwrap();
+            toast.success(res.message);
+            refetch();
+            setIsDeleteModalOpen(false);
+        } catch (error) {
+            toast.error("Xoá khách sạn thất bại");
+            console.error("Error delete hotel:", error);
+        }
+    }
+
+    const [messageApi, contextMessageHolder] = message.useMessage();
+    useEffect(() => {
+        if (isDeletingHotel) {
+            messageApi.open({
+                key: 'deleteHotel',
+                type: 'loading',
+                content: 'Đang xoá...',
+                duration: 0,
+            });
+        } else {
+            messageApi.destroy('deleteHotel');
+        }
+    }, [isDeletingHotel]);
 
     return (
         <div>
+            {contextMessageHolder}
             {isLoading ? (
                 <div className="p-2 rounded-lg shadow-md border border-gray-100 h-[360px] animate-pulse space-y-4">
                     <div className="h-[180px] bg-gray-200 rounded w-full" />
@@ -350,9 +350,9 @@ const HotelCard = ({ hotel, handleDeleteHotel }) => {
                                     {
                                         key: '2',
                                         label: (
-                                            <div className='flex items-center w-[100px] text-red-500' onClick={() => {
-                                                handleDeleteHotel(hotel._id)
-                                            }}>
+                                            <div className='flex items-center w-[100px] text-red-500'
+                                                onClick={() => setIsDeleteModalOpen(true)}
+                                            >
                                                 <MdDeleteForever className='text-[20px] mr-2' />
                                                 Xoá
                                             </div>
@@ -367,6 +367,17 @@ const HotelCard = ({ hotel, handleDeleteHotel }) => {
                             </div>
                         </Dropdown>
                     </div>
+                    <Modal
+                        title="Xác nhận xóa hotel"
+                        open={isDeleteModalOpen}
+                        onOk={() => handleDeleteHotel(hotel._id)}
+                        onCancel={() => setIsDeleteModalOpen(false)}
+                        okText="Xóa"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true, loading: isLoading }}
+                    >
+                        <p>Bạn có chắc chắn muốn xoá hotel này không?</p>
+                    </Modal>
                 </div>
             )}
         </div>
