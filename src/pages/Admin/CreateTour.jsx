@@ -7,10 +7,7 @@ import FormInput from "../../components/FormInput";
 import FormSelect from "../../components/FormSelect";
 import TextEditor from "./TextEditor";
 import { HiPlus } from "react-icons/hi";
-import {
-    useUploadImagesMutation,
-    useDeleteImageMutation,
-} from "../../redux/api/uploadApiSlice";
+import { useUploadImagesMutation, useDeleteImageMutation } from "../../redux/api/uploadApiSlice";
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Modal } from "antd";
@@ -20,8 +17,7 @@ import UploadImg from "../../components/UploadImg";
 import { CATEGORY_OPTIONS, LANGUAGE_OPTIONS } from "../../constants/tour";
 import { useGetCitiesQuery } from "../../redux/api/cityApiSlice";
 
-const cloudinaryBaseUrl =
-    "https://res.cloudinary.com/dytiq61hf/image/upload/v1744375449";
+const cloudinaryBaseUrl = "https://res.cloudinary.com/dytiq61hf/image/upload/v1744375449";
 const CreateTour = () => {
     const { data: cities, isLoading: isCitiesLoading } = useGetCitiesQuery();
 
@@ -100,12 +96,8 @@ const CreateTour = () => {
         setTickets([...tickets, ticket]);
 
         if (useDefaultPolicy) {
-            const {
-                voucherValidity,
-                redemptionPolicy,
-                cancellationPolicy,
-                termsAndConditions,
-            } = ticket;
+            const { voucherValidity, redemptionPolicy, cancellationPolicy, termsAndConditions } =
+                ticket;
             setDefaultPolicy({
                 voucherValidity,
                 redemptionPolicy,
@@ -122,12 +114,8 @@ const CreateTour = () => {
         updatedTickets[editingIndex] = updatedTicket;
         setTickets(updatedTickets);
         if (useDefaultPolicy) {
-            const {
-                voucherValidity,
-                redemptionPolicy,
-                cancellationPolicy,
-                termsAndConditions,
-            } = updatedTicket;
+            const { voucherValidity, redemptionPolicy, cancellationPolicy, termsAndConditions } =
+                updatedTicket;
             setDefaultPolicy({
                 voucherValidity,
                 redemptionPolicy,
@@ -166,11 +154,7 @@ const CreateTour = () => {
 
     const [
         uploadTourImages,
-        {
-            isLoading: isUploadLoading,
-            isError: isUploadError,
-            isSuccess: isUploadSuccess,
-        },
+        { isLoading: isUploadLoading, isError: isUploadError, isSuccess: isUploadSuccess },
     ] = useUploadImagesMutation();
 
     const uploadImagesToCloudinary = async (imagesBase64) => {
@@ -270,18 +254,16 @@ const CreateTour = () => {
                 <h2 className="font-semibold text-2xl">Thêm thông tin tour</h2>
                 <form onSubmit={handleSubmit(onSubmitTour)}>
                     <div className="bg-white rounded-lg shadow-md mt-6">
-                        <h2 className="font-semibold text-lg px-6 py-4 border-b">
-                            Thông tin tour
-                        </h2>
+                        <h2 className="font-semibold text-lg px-6 py-4 border-b">Thông tin tour</h2>
                         <div className="space-y-4 p-6 overflow-auto">
                             <FormInput
                                 label={"Tên tour"}
                                 name={"name"}
                                 register={register}
                                 errors={errors}
-                                // validationRules={{
-                                //     required: "Tên là bắt buộc",
-                                // }}
+                                validationRules={{
+                                    required: "Tên là bắt buộc",
+                                }}
                                 placeholder={"Tên tour"}
                             ></FormInput>
 
@@ -291,17 +273,17 @@ const CreateTour = () => {
                                 placeholder={"Địa điểm"}
                                 register={register}
                                 errors={errors}
-                                // validationRules={{
-                                //     required: "Địa điểm là bắt buộc",
-                                // }}
+                                validationRules={{
+                                    required: "Địa điểm là bắt buộc",
+                                }}
                             ></FormInput>
                             <FormSelect
                                 label={"Loại tour"}
                                 name={"category"}
                                 placeholder={"Chọn loại tour"}
-                                // validationRules={{
-                                //     required: "Loại tour là bắt buộc",
-                                // }}
+                                validationRules={{
+                                    required: "Loại tour là bắt buộc",
+                                }}
                                 options={CATEGORY_OPTIONS}
                                 errors={errors}
                                 control={control}
@@ -316,9 +298,9 @@ const CreateTour = () => {
                                     name={"city"}
                                     control={control}
                                     placeholder={"Chọn thành phố"}
-                                    // validationRules={{
-                                    //     required: "Thành phố là bắt buộc",
-                                    // }}
+                                    validationRules={{
+                                        required: "Thành phố là bắt buộc",
+                                    }}
                                     options={cityOptions}
                                     className="flex-1"
                                     errors={errors}
@@ -329,9 +311,9 @@ const CreateTour = () => {
                                     register={register}
                                     errors={errors}
                                     placeholder={"Nhập thời lượng tour"}
-                                    // validationRules={{
-                                    //     required: "Thời lượng tour là bắt buộc",
-                                    // }}
+                                    validationRules={{
+                                        required: "Thời lượng tour là bắt buộc",
+                                    }}
                                     className="flex-1"
                                 ></FormInput>
                             </div>
@@ -339,9 +321,9 @@ const CreateTour = () => {
                                 label={"Trải nghiệm"}
                                 name="experiences"
                                 placeholder="Nhập các trải nghiệm của tour..."
-                                // validationRules={{
-                                //     required: "Trải nghiệm tour là bắt buộc",
-                                // }}
+                                validationRules={{
+                                    required: "Trải nghiệm tour là bắt buộc",
+                                }}
                                 control={control}
                                 errors={errors}
                             ></TextEditor>
@@ -349,9 +331,9 @@ const CreateTour = () => {
                                 label={"Dịch vụ ngôn ngữ"}
                                 name={"languageService"}
                                 placeholder={"Chọn dịch vụ ngôn ngữ có sẵn"}
-                                // validationRules={{
-                                //     required: "Dịch vụ ngôn ngữ là bắt buộc",
-                                // }}
+                                validationRules={{
+                                    required: "Dịch vụ ngôn ngữ là bắt buộc",
+                                }}
                                 options={LANGUAGE_OPTIONS}
                                 errors={errors}
                                 control={control}
@@ -381,9 +363,9 @@ const CreateTour = () => {
                                 label={"Thông tin thêm"}
                                 name="additionalInformation"
                                 placeholder="Nhập lịch trình của tour..."
-                                // validationRules={{
-                                //     required: "Lịch trình tour là bắt buộc",
-                                // }}
+                                validationRules={{
+                                    required: "Lịch trình tour là bắt buộc",
+                                }}
                                 control={control}
                                 errors={errors}
                             ></TextEditor>
@@ -418,9 +400,7 @@ const CreateTour = () => {
         <div className="">
             <div className="bg-white rounded-lg shadow-md mt-4">
                 <div className="flex items-baseline justify-between px-6 py-4 border-b">
-                    <h2 className="font-semibold text-lg text-">
-                        Thông tin vé
-                    </h2>
+                    <h2 className="font-semibold text-lg text-">Thông tin vé</h2>
                     <button
                         onClick={showModal}
                         className="flex items-center p-2 text-white bg-blue-500 gap-2 rounded"
@@ -474,37 +454,23 @@ const CreateTour = () => {
                     {tickets.length > 0 ? (
                         <div className="space-y-6">
                             {tickets.map((ticket, index) => (
-                                <div
-                                    key={index}
-                                    className="border rounded-lg px-4 py-2 shadow-sm"
-                                >
+                                <div key={index} className="border rounded-lg px-4 py-2 shadow-sm">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h3 className="text-lg font-medium">
-                                                {ticket.title}
-                                            </h3>
+                                            <h3 className="text-lg font-medium">{ticket.title}</h3>
                                             {ticket.subtitle && (
-                                                <p className="text-gray-600">
-                                                    {ticket.subtitle}
-                                                </p>
+                                                <p className="text-gray-600">{ticket.subtitle}</p>
                                             )}
                                         </div>
                                         <div className="flex space-x-2">
                                             <button
-                                                onClick={() =>
-                                                    handleEditTicket(
-                                                        ticket,
-                                                        index
-                                                    )
-                                                }
+                                                onClick={() => handleEditTicket(ticket, index)}
                                                 className="text-indigo-600 font-semibold"
                                             >
                                                 <CiEdit className="w-6 h-6"></CiEdit>
                                             </button>
                                             <button
-                                                onClick={() =>
-                                                    handleDeleteTicket(index)
-                                                }
+                                                onClick={() => handleDeleteTicket(index)}
                                                 className="text-red-600"
                                             >
                                                 <MdOutlineDeleteForever className="w-6 h-6"></MdOutlineDeleteForever>
@@ -514,31 +480,24 @@ const CreateTour = () => {
 
                                     <div className="mt-2">
                                         <div className="space-y-2">
-                                            {ticket.prices.map(
-                                                (price, priceIndex) => (
-                                                    <div
-                                                        key={priceIndex}
-                                                        className="pl-4 border-l-2 border-indigo-200"
-                                                    >
-                                                        <p>
-                                                            <span className="font-medium">
-                                                                {
-                                                                    price.priceType
-                                                                }
-                                                                :
-                                                            </span>{" "}
-                                                            {price.price.toLocaleString()}{" "}
-                                                            VND
+                                            {ticket.prices.map((price, priceIndex) => (
+                                                <div
+                                                    key={priceIndex}
+                                                    className="pl-4 border-l-2 border-indigo-200"
+                                                >
+                                                    <p>
+                                                        <span className="font-medium">
+                                                            {price.priceType}:
+                                                        </span>{" "}
+                                                        {price.price.toLocaleString()} VND
+                                                    </p>
+                                                    {price.notes && (
+                                                        <p className="text-sm text-gray-600">
+                                                            Ghi chú: {price.notes}
                                                         </p>
-                                                        {price.notes && (
-                                                            <p className="text-sm text-gray-600">
-                                                                Ghi chú:{" "}
-                                                                {price.notes}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                )
-                                            )}
+                                                    )}
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
@@ -558,8 +517,7 @@ const CreateTour = () => {
                 </button>
                 <button
                     onClick={() => {
-                        if (tickets.length === 0)
-                            return alert("Phải có ít nhất 1 vé");
+                        if (tickets.length === 0) return alert("Phải có ít nhất 1 vé");
                         console.log(tickets);
                         setStep(3);
                     }}
@@ -581,14 +539,16 @@ const CreateTour = () => {
                 render: "Tải ảnh thành công!",
                 type: "success",
                 isLoading: false,
-                autoClose: 3000,
+                closeButton: true,
+                autoClose:3000
             });
         } else if (isUploadError) {
             toast.update(uploadToastId.current, {
                 render: "Tải ảnh thất bại!",
                 type: "error",
                 isLoading: false,
-                autoClose: 3000,
+                closeButton: true,
+                autoClose:3000
             });
         }
     }, [isUploadLoading, isUploadSuccess, isUploadError]);
@@ -606,17 +566,12 @@ const CreateTour = () => {
                             <div className="mt-2">
                                 <div className="flex items-center space-x-2 mb-4">
                                     <div className="w-2 h-7 bg-blue-500 rounded"></div>
-                                    <h2 className="text-[20px] font-semibold">
-                                        Ảnh đã chọn
-                                    </h2>
+                                    <h2 className="text-[20px] font-semibold">Ảnh đã chọn</h2>
                                 </div>
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-4">
                                     {/* Ảnh hiện có */}
                                     {existingImages.map((publicId, index) => (
-                                        <div
-                                            key={index}
-                                            className="relative group"
-                                        >
+                                        <div key={index} className="relative group">
                                             <img
                                                 src={`${cloudinaryBaseUrl}/${publicId}`}
                                                 alt={`hotel-${publicId}`}
@@ -626,10 +581,7 @@ const CreateTour = () => {
                                     ))}
                                     {/* Ảnh mới */}
                                     {images.map((img) => (
-                                        <div
-                                            key={img.id}
-                                            className="relative group"
-                                        >
+                                        <div key={img.id} className="relative group">
                                             <img
                                                 src={img.preview}
                                                 alt={`preview-${img.id}`}
@@ -644,9 +596,7 @@ const CreateTour = () => {
                         <div className="mt-2">
                             <div className="flex items-center space-x-2">
                                 <div className="w-2 h-7 bg-blue-500 rounded"></div>
-                                <h2 className="text-[20px] font-semibold">
-                                    Danh sách vé
-                                </h2>
+                                <h2 className="text-[20px] font-semibold">Danh sách vé</h2>
                             </div>
                             <div className="space-y-4 mt-4 pl-5">
                                 {tickets.map((ticket, index) => (
@@ -659,10 +609,7 @@ const CreateTour = () => {
                                         </p>
                                         <span className="text-lg font-semibold text-orange-500">
                                             {" "}
-                                            {ticket.prices[0].price.toLocaleString(
-                                                "vi-VN"
-                                            )}{" "}
-                                            VND
+                                            {ticket.prices[0].price.toLocaleString("vi-VN")} VND
                                         </span>
                                     </div>
                                 ))}

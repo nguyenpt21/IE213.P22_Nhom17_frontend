@@ -55,12 +55,6 @@ const TopHeader = () => {
                     {!user ? (
                         <>
                             <Link
-                                to="#"
-                                className="hover:text-primary transition-colors text-[12px] font-medium"
-                            >
-                                Xem gần đây
-                            </Link>
-                            <Link
                                 to="/sign-up"
                                 className="hover:text-primary transition-colors text-[14px]"
                             >

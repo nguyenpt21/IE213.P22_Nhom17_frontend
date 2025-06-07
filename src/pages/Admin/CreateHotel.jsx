@@ -199,7 +199,7 @@ const CreateHotel = () => {
                             register={register}
                             errors={errors}
                             placeholder={"Nhập tên khách sạn"}
-                        // validationRules = {{required: "Tên là bắt buộc"}}
+                        validationRules = {{required: "Tên là bắt buộc"}}
                         />
                         <FormTextArea
                             label={"Mô tả"}
@@ -207,7 +207,7 @@ const CreateHotel = () => {
                             register={register}
                             errors={errors}
                             placeholder={"Nhập mô tả"}
-                            // validationRules={{ required: "Mô tả là bắt buộc" }}
+                            validationRules={{ required: "Mô tả là bắt buộc" }}
                             row={4}
                         />
                         <div className="">
@@ -219,7 +219,7 @@ const CreateHotel = () => {
                                     watch,
                                     setValue
                                 }}
-                            // validationRules = {{required: "Địa chỉ là bắt buộc" }}
+                            validationRules = {{required: "Địa chỉ là bắt buộc" }}
                             />
                         </div>
                         <div className='flex gap-5 mb-3'>
@@ -229,7 +229,7 @@ const CreateHotel = () => {
                                 control={control}
                                 options={cityOptions}
                                 placeholder={"Chọn thành phố"}
-                                // validationRules={{ required: "Thành phố là bắt buộc" }}
+                                validationRules={{ required: "Thành phố là bắt buộc" }}
                                 valueField="_id"
                                 labelField="name"
                                 errors={errors}
@@ -242,7 +242,7 @@ const CreateHotel = () => {
                                 register={register}
                                 errors={errors}
                                 placeholder={"Nhập số lượng phòng"}
-                            // validationRules = {{ required: "Số phòng là bắt buộc" }}
+                            validationRules = {{ required: "Số phòng là bắt buộc" }}
                             />
                         </div>
                         <div className="flex-1 mb-6">
@@ -253,7 +253,7 @@ const CreateHotel = () => {
                             <Controller
                                 name="serviceFacilities"
                                 control={control}
-                                // rules={{ required: "Cơ sở vật chất là bắt buộc" }}
+                                rules={{ required: "Cơ sở vật chất là bắt buộc" }}
                                 render={({ field }) => (
                                     <TreeSelect
                                         {...field}

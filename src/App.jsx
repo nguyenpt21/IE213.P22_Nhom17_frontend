@@ -54,7 +54,7 @@ function App() {
                     <Route path="*" element={<PublicRoutes />} />
                 </Routes>
             </BrowserRouter>
-            <ToastContainer />
+            <ToastContainer autoClose={2000}/>
         </>
     );
 }

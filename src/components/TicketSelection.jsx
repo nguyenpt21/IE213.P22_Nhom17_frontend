@@ -17,7 +17,7 @@ const TicketSelection = () => {
     const { ticket, tour } = location.state;
 
     const dispatch = useDispatch();
-    const selectedDate = useSelector((state) => state.tourDate.selectedDate)
+    const selectedDate = useSelector((state) => state.tourDate.selectedDate) || dayjs()
        
 
     const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
@@ -280,6 +280,7 @@ const TicketSelection = () => {
                                             ticket,
                                             tour,
                                             quantities,
+                                            passSelectedDate: selectedDate
                                         },
                                     })
                                 }

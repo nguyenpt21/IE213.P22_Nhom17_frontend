@@ -12,17 +12,13 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { useState, useEffect, useRef } from "react";
 import { Modal } from "antd";
 import { LANGUAGE_OPTIONS } from "../constants/tour";
-import {
-    MapContainer,
-    TileLayer,
-    Marker,
-    Popup,
-    useMap,
-    useMapEvents,
-} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
+dayjs.locale("vi");
 
 const customIcon = new L.Icon({
     iconUrl: markerIcon,
@@ -30,14 +26,14 @@ const customIcon = new L.Icon({
     iconAnchor: [12, 41],
 });
 
-const TourInformationUser = ({ tourData }) => {
+const TourInformationUser = ({ tourData, scrollToTicket, scrollToReview }) => {
     const [isModalExpOpen, setIsModalExpOpen] = useState(false);
     const showModalExp = () => {
         setIsModalExpOpen(true);
     };
 
     const handleCancelExp = () => {
-        setIsModalPluspOpen(false);
+        setIsModalExpOpen(false);
     };
 
     const [isModalPlusOpen, setIsModalPluspOpen] = useState(false);
@@ -73,9 +69,7 @@ const TourInformationUser = ({ tourData }) => {
 
     const [position, setPosition] = useState(null);
     useEffect(() => {
-        getLatLngFromAddress(tourData.location)
-            .then(setPosition)
-            .catch(console.error);
+        getLatLngFromAddress(tourData.location).then(setPosition).catch(console.error);
     }, []);
 
     const KeepCenter = ({ position }) => {
@@ -95,19 +89,16 @@ const TourInformationUser = ({ tourData }) => {
             if (modalOpen) {
                 setTimeout(() => {
                     map.invalidateSize();
-                }, 200); 
+                }, 200);
             }
         }, [modalOpen, map]);
 
         return null;
-    }
+    };
 
-    
     return (
         <div className="py-6">
-            <h2 className="text-3xl font-bold mt-4 text-white">
-                {tourData.name}
-            </h2>
+            <h2 className="text-3xl font-bold mt-4 text-white">{tourData.name}</h2>
 
             <div className="flex gap-4 my-2 text-white">
                 <div className="flex items-center gap-2 font-semibold">
@@ -126,10 +117,7 @@ const TourInformationUser = ({ tourData }) => {
             </div>
             {tourData.images.length > 0 && (
                 <div className="border border-gray-200 rounded-lg">
-                    <ImageGalleryFromCloudinary
-                        existingImages={tourData.images}
-                        option={1}
-                    />
+                    <ImageGalleryFromCloudinary existingImages={tourData.images} option={1} />
                 </div>
             )}
             <div className="flex mt-6 gap-2">
@@ -144,7 +132,7 @@ const TourInformationUser = ({ tourData }) => {
                         <div>
                             <p className="font-semibold">Xuất sắc</p>
                             <p className="font-bold text-primary">
-                                167 đánh giá
+                                {tourData.numReview} đánh giá
                             </p>
                         </div>
                     </div>
@@ -160,18 +148,12 @@ const TourInformationUser = ({ tourData }) => {
                                     <IoIosArrowForward className="w-5 h-5"></IoIosArrowForward>
                                 </span>
                             </p>
-                            <p className="font-semibold">
-                                {tourData.location.split(", ")[0]}
-                            </p>
+                            <p className="font-semibold">{tourData.location.split(", ")[0]}</p>
                         </div>
                     </div>
 
                     <Modal
-                        title={
-                            <p className="text-xl font-blod">
-                                Thông tin địa điểm
-                            </p>
-                        }
+                        title={<p className="text-xl font-blod">Thông tin địa điểm</p>}
                         open={isModalLocationOpen}
                         onCancel={() => setIsModalLocationOpen(false)}
                         footer={null}
@@ -195,7 +177,9 @@ const TourInformationUser = ({ tourData }) => {
                             <Marker position={position} icon={customIcon}>
                                 <Popup>{tourData.location}</Popup>
                             </Marker>
-                            <MapInvalidateOnOpen modalOpen={isModalLocationOpen}></MapInvalidateOnOpen>
+                            <MapInvalidateOnOpen
+                                modalOpen={isModalLocationOpen}
+                            ></MapInvalidateOnOpen>
                         </MapContainer>
                     </Modal>
                 </div>
@@ -206,15 +190,12 @@ const TourInformationUser = ({ tourData }) => {
                             {tourData.fromPrice.toLocaleString("vi-VN")} VND
                         </p>
                     </div>
-                    <a
-                        href=""
-                        className="px-8 py-2 bg-[#fd5d1c] rounded-full text-white"
-                    >
+                    <div onClick={scrollToTicket} className="px-8 py-2 bg-[#fd5d1c] rounded-full text-white cursor-pointer">
                         Tìm Tour
-                    </a>
+                    </div>
                 </div>
             </div>
-            <div className="flex mt-4 gap-2">
+            <div className="flex mt-4 gap-2 h-[226px]">
                 <div className="w-[60%] p-4 bg-[#f7f9fa] rounded-lg font-semibold flex flex-col gap-2">
                     <div className="flex gap-2">
                         <BsQuestionCircleFill className="text-blue_medium w-6 h-6 mt-[2px] flex-shrink-0"></BsQuestionCircleFill>
@@ -236,11 +217,7 @@ const TourInformationUser = ({ tourData }) => {
                                     Đọc thêm
                                 </p>
                                 <Modal
-                                    title={
-                                        <p className="text-xl font-bold">
-                                            Bạn sẽ trải nghiệm
-                                        </p>
-                                    }
+                                    title={<p className="text-xl font-bold">Bạn sẽ trải nghiệm</p>}
                                     open={isModalExpOpen}
                                     onCancel={handleCancelExp}
                                     footer={null}
@@ -258,12 +235,8 @@ const TourInformationUser = ({ tourData }) => {
                     </div>
                     <div className="flex gap-2 items-center border-t-[1.5px] pt-3">
                         <RiFileList3Fill className="w-6 h-6 text-blue_medium"></RiFileList3Fill>
-                        <p
-                            className="text-blue_medium cursor-pointer"
-                            onClick={showModalPlus}
-                        >
-                            Thông tin liên hệ, Tiện ích, Dịch vụ ngôn ngữ và
-                            nhiều thông tin khác
+                        <p className="text-blue_medium cursor-pointer" onClick={showModalPlus}>
+                            Thông tin liên hệ, Tiện ích, Dịch vụ ngôn ngữ và nhiều thông tin khác
                         </p>
                         <Modal
                             title={
@@ -291,31 +264,23 @@ const TourInformationUser = ({ tourData }) => {
                                             Dịch vụ ngôn ngữ
                                         </h3>
                                         <ul className="ml-2 ">
-                                            {tourData.languageService.map(
-                                                (val) => (
-                                                    <li>
-                                                        {
-                                                            LANGUAGE_OPTIONS.find(
-                                                                (options) =>
-                                                                    options.value ==
-                                                                    val
-                                                            ).label
-                                                        }
-                                                    </li>
-                                                )
-                                            )}
+                                            {tourData.languageService.map((val) => (
+                                                <li>
+                                                    {
+                                                        LANGUAGE_OPTIONS.find(
+                                                            (options) => options.value == val
+                                                        ).label
+                                                    }
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
                                 </div>
                                 <div className="flex gap-3 px-6 py-2 border-b">
                                     <AiFillLike className="w-6 h-6 text-gray-500  flex-shrink-0"></AiFillLike>
                                     <div>
-                                        <h3 className="font-semibold text-lg mb-2">
-                                            Phù hợp với
-                                        </h3>
-                                        <div className="ml-2">
-                                            {tourData.suitableFor}
-                                        </div>
+                                        <h3 className="font-semibold text-lg mb-2">Phù hợp với</h3>
+                                        <div className="ml-2">{tourData.suitableFor}</div>
                                     </div>
                                 </div>
                                 <div className="flex gap-3  px-6 py-2 border-b">
@@ -324,9 +289,7 @@ const TourInformationUser = ({ tourData }) => {
                                         <h3 className="font-semibold text-lg mb-2">
                                             Liên hệ đối tác
                                         </h3>
-                                        <div className="ml-2">
-                                            {tourData.contact}
-                                        </div>
+                                        <div className="ml-2">{tourData.contact}</div>
                                     </div>
                                 </div>
                                 <div className="flex gap-3  px-6 py-2 border-b">
@@ -347,25 +310,65 @@ const TourInformationUser = ({ tourData }) => {
                         </Modal>
                     </div>
                 </div>
-                <div className="flex-1 flex flex-col gap-2">
-                    <div className="flex-1 flex items-center justify-center flex-col bg-[#f7f9fa] rounded-lg">
-                        <FaRegCommentDots></FaRegCommentDots>
-                        <p className="font-bold">
-                            Để lại đánh giá khi bạn có thể!
-                        </p>
-                        <p className="text-sm text-center">
-                            Điều này sẽ giúp các du khách khác khi họ lên kế
-                            hoạch du lịch.
-                        </p>
+                {tourData.reviews.length > 0 ? (
+                    <div className="flex-1 flex h-full overflow-auto flex-col gap-2 rounded-lg">
+                        <div className="flex gap-2">
+                            <p className="font-semibold text-base ">Ấn tượng từ những du khách khác</p>
+                            <p onClick={scrollToReview} className="font-semibold text-primary text-center cursor-pointer">Xem tất cả đánh giá</p>
+                        </div>
+                        <div className="p-3 bg-[#f7f9fa] flex flex-col flex-1 ">
+                            <div className="flex items-start gap-2">
+                                <div className="flex items-center gap-2">
+                                    {tourData.reviews[0].userId.profilePicture ? (
+                                        <img
+                                            src={tourData.reviews[0].userId.profilePicture}
+                                            className="w-6 h-6 rounded-full"
+                                        ></img>
+                                    ) : (
+                                        <div className="w-7 h-7 text-sm rounded-full flex items-center justify-center bg-[#8dbd8b] text-gray-200 gap-[2px]">
+                                            <span>{tourData.reviews[0].userId.firstName[0]}</span>
+                                            <span>{tourData.reviews[0].userId.lastName[0]}</span>
+                                        </div>
+                                    )}
+
+                                    <div className="flex text-sm flex-col gap-0.5">
+                                        <p className="font-semibold">
+                                            {tourData.reviews[0].userId.firstName}{" "}
+                                            {tourData.reviews[0].userId.lastName}
+                                        </p>
+                                        <p className="text-gray-400">
+                                            {dayjs(tourData.reviews[0].createdAt).format(
+                                                "DD/MM/YYYY"
+                                            )}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="ml-auto">
+                                    <span className="text-primary font-bold text-lg">
+                                        {tourData.reviews[0].rating}
+                                    </span>
+                                    <span className="font-bold text-gray-500">/5</span>
+                                </div>
+                            </div>
+                            <p className="line-clamp-5 flex-1 text-sm mt-auto">{tourData.reviews[0].comment}</p>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="flex-1 flex flex-col gap-2">
+                        <div className="flex-1 flex items-center justify-center flex-col bg-[#f7f9fa] rounded-lg">
+                            <FaRegCommentDots></FaRegCommentDots>
+                            <p className="font-bold">Để lại đánh giá khi bạn có thể!</p>
+                            <p className="text-sm text-center">
+                                Điều này sẽ giúp các du khách khác khi họ lên kế hoạch du lịch.
+                            </p>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="mt-4">
                 <div className="relative">
-                    <h3 className="text-[20px] font-bold text-center">
-                        Lịch trình tour
-                    </h3>
+                    <h3 className="text-[20px] font-bold text-center">Lịch trình tour</h3>
                     <div
                         className="dot max-h-[150px] overflow-hidden text-gray-700 bg-transparent font-semibold"
                         dangerouslySetInnerHTML={{
@@ -384,9 +387,7 @@ const TourInformationUser = ({ tourData }) => {
                         </span>
                     </span>
                     <Modal
-                        title={
-                            <p className="text-xl font-bold">Lịch trình tour</p>
-                        }
+                        title={<p className="text-xl font-bold">Lịch trình tour</p>}
                         open={isModalItiOpen}
                         onCancel={handleCancelIti}
                         footer={null}

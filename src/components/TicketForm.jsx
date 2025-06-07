@@ -133,9 +133,9 @@ const TicketForm = ({
                 name={"title"}
                 register={register}
                 errors={errors}
-                // validationRules={{
-                //     required: "Tên là bắt buộc",
-                // }}
+                validationRules={{
+                    required: "Tên là bắt buộc",
+                }}
                 placeholder={"Tên vé"}
             ></FormInput>
             <FormInput
@@ -143,9 +143,7 @@ const TicketForm = ({
                 name={"subtitle"}
                 register={register}
                 errors={errors}
-                // validationRules={{
-                //     required: "Tên là bắt buộc",
-                // }}
+                
                 placeholder={"Ghi chú vé"}
             ></FormInput>
 
@@ -223,7 +221,7 @@ const TicketForm = ({
                             <button
                                 type="button"
                                 onClick={() => removePriceField(index)}
-                                className="inline-flex items-center gap-2 text-sm text-red-500 hover:bg-red-100 rounded-full absolute right-4 top-2"
+                                className="inline-flex items-center gap-2 text-sm text-red-500 hover:bg-red-100 rounded-full absolute right-2 top-0.5"
                             >
                                 <FaRegTimesCircle className="w-[18px] h-[18px]"></FaRegTimesCircle>
                             </button>
@@ -253,9 +251,9 @@ const TicketForm = ({
             <TextEditor
                 label={"Tổng quan"}
                 name="overview"
-                // validationRules={{
-                //     required: "Trải nghiệm tour là bắt buộc",
-                // }}
+                validationRules={{
+                    required: "Trải nghiệm tour là bắt buộc",
+                }}
                 placeholder={"Giá vé đã/không bao gồm"}
                 control={control}
                 errors={errors}
@@ -284,9 +282,6 @@ const TicketForm = ({
                 <TextEditor
                     label={"Cách đổi phiếu"}
                     name="redemptionPolicy.method"
-                    // validationRules={{
-                    //     required: "Trải nghiệm tour là bắt buộc",
-                    // }}
                     placeholder={""}
                     control={control}
                     errors={errors}
@@ -296,9 +291,6 @@ const TicketForm = ({
                 <TextEditor
                     label={"Địa điểm đổi phiếu"}
                     name="redemptionPolicy.location"
-                    // validationRules={{
-                    //     required: "Trải nghiệm tour là bắt buộc",
-                    // }}
                     placeholder={""}
                     control={control}
                     errors={errors}

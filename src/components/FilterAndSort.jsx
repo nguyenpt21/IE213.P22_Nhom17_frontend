@@ -1,11 +1,7 @@
-import { Modal, Slider } from "antd";
+import { Modal, Slider, Pagination } from "antd";
 import { useState } from "react";
 import { IoFilterSharp } from "react-icons/io5";
-import {
-    CATEGORY_OPTIONS,
-    DURATION_OPTIONS,
-    LANGUAGE_OPTIONS,
-} from "../constants/tour";
+import { CATEGORY_OPTIONS, DURATION_OPTIONS, LANGUAGE_OPTIONS } from "../constants/tour";
 import SelectItem from "./SelectItem";
 import { useGetToursQuery } from "../redux/api/tourApiSlice";
 import TourCard from "./TourCard";
@@ -29,6 +25,7 @@ const FilterAndSort = () => {
                 return [...prev, item];
             }
         });
+       
     };
 
     function ModelContentSection({ title, children }) {
@@ -67,31 +64,41 @@ const FilterAndSort = () => {
         );
     }
 
-    const [sort, setSort] = useState(sortOptionList[0].value);
+    const [contFilter, setCountFilter] = useState(0);
 
+    const [sort, setSort] = useState(sortOptionList[0].value);
+    const [page, setPage] = useState();
     const [priceRange, setPriceRange] = useState([0, 6000000]);
     const [language, setLanguage] = useState([]);
     const [category, setCategory] = useState([]);
     const [duration, setDuration] = useState([]);
 
-    const [appliedFilters, setAppliedFilters] = useState(true)
+    const [appliedFilters, setAppliedFilters] = useState(true);
+    const handleChangePage = (newPage) => {
+        setPage(newPage);
+    };
     const {
         data: tours,
         refetch,
         isLoading,
-    } = useGetToursQuery({
-        category: category.join(','),
-        languageService: language.join(','),
-        minPrice: priceRange[0],
-        maxPrice: priceRange[1],
-        duration: duration.join(','),
-        sort
-    }, {
-        skip: !appliedFilters
-    });
+    } = useGetToursQuery(
+        {
+            category: category.join(","),
+            languageService: language.join(","),
+            minPrice: priceRange[0],
+            maxPrice: priceRange[1],
+            duration: duration.join(","),
+            sort,
+            limit: 8,
+            page,
+        },
+        {
+            skip: !appliedFilters,
+        }
+    );
 
-    if (isLoading) return <>Loading</>
-    console.log(tours)
+    if (isLoading) return <>Loading</>;
+    console.log(tours);
     return (
         <div>
             <p className="font-semibold text-2xl">Những tour không thể bỏ lỡ</p>
@@ -99,8 +106,8 @@ const FilterAndSort = () => {
                 <button
                     className="flex items-center gap-2 rounded-lg border-2 border-gray-900 px-4 py-2"
                     onClick={() => {
-                        setIsOpen(true)
-                        setAppliedFilters(false)
+                        setIsOpen(true);
+                        setAppliedFilters(false);
                     }}
                 >
                     <IoFilterSharp className="w-5 h-5"></IoFilterSharp>
@@ -108,14 +115,13 @@ const FilterAndSort = () => {
                 </button>
 
                 <Modal
-                    title={
-                        <p className="text-[20px] font-bold px-4 pt-2">Lọc</p>
-                    }
+                    title={<p className="text-[20px] font-bold px-4 pt-2">Lọc</p>}
                     footer={null}
                     open={isOpen}
                     onCancel={() => {
-                        setIsOpen(false)
-                        setAppliedFilters(true)
+                        setIsOpen(false);
+                        setAppliedFilters(true);
+                        setCountFilter(language.length + category.length + duration.length);
                     }}
                     width={700}
                     centered
@@ -142,9 +148,8 @@ const FilterAndSort = () => {
                             </ModelContentSection>
                             <ModelContentSection title={"Giá"}>
                                 <span>
-                                    {priceRange[0].toLocaleString("vi-VN")} VND
-                                    - {priceRange[1].toLocaleString("vi-VN")}{" "}
-                                    VND
+                                    {priceRange[0].toLocaleString("vi-VN")} VND -{" "}
+                                    {priceRange[1].toLocaleString("vi-VN")} VND
                                 </span>
                                 <Slider
                                     range
@@ -154,9 +159,7 @@ const FilterAndSort = () => {
                                     onChange={(newVal) => setPriceRange(newVal)}
                                     tooltip={{
                                         formatter: (value) =>
-                                            `${value.toLocaleString(
-                                                "vi-VN"
-                                            )} VND`,
+                                            `${value.toLocaleString("vi-VN")} VND`,
                                     }}
                                     styles={{
                                         track: { background: "#3b82f6" }, // Màu phần được chọn (track)
@@ -168,9 +171,7 @@ const FilterAndSort = () => {
                                     afterOpenChange={(opened) => {
                                         if (opened) {
                                             setTimeout(() => {
-                                                window.dispatchEvent(
-                                                    new Event("resize")
-                                                );
+                                                window.dispatchEvent(new Event("resize"));
                                             }, 100);
                                         }
                                     }}
@@ -213,11 +214,12 @@ const FilterAndSort = () => {
                                 Xóa
                             </span>
                             <button
-                            onClick={() => {
-                                setAppliedFilters(true)
-                                setIsOpen(false)
-                            }}
-                             className="text-white bg-primary text-base font-semibold px-4 py-2 rounded-xl">
+                                onClick={() => {
+                                    setAppliedFilters(true);
+                                    setIsOpen(false);
+                                }}
+                                className="text-white bg-primary text-base font-semibold px-4 py-2 rounded-xl"
+                            >
                                 Xem kết quả
                             </button>
                         </div>
@@ -237,6 +239,16 @@ const FilterAndSort = () => {
                     <TourCard tour={tour} key={key}></TourCard>
                 ))}
             </div>
+            <Pagination
+                total={tours?.totalTours}
+                align="center"
+                style={{
+                    marginTop: "20px",
+                }}
+                pageSize={tours?.pageSize}
+                current={page}
+                onChange={handleChangePage}
+            />
         </div>
     );
 };

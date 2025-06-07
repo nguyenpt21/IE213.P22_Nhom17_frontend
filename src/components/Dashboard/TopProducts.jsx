@@ -113,7 +113,7 @@ const TopProducts = ({ tours, hotels }) => {
 
     return (
         <>
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-semibold text-gray-900">Sản Phẩm Bán Chạy Nhất</h3>
                     <button className="p-1.5 hover:bg-gray-100 rounded-lg">
@@ -124,7 +124,7 @@ const TopProducts = ({ tours, hotels }) => {
                 <div className="space-y-4">
                     {combinedProducts.length > 0 ? (
                         combinedProducts.map((product, index) => (
-                            <div key={product.id} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                            <div key={product.id} className="flex items-center space-x-4 p-1 hover:bg-gray-50 rounded-lg transition-colors">
                                 <div className={`w-12 h-12 rounded-lg ${product.bgColor} flex items-center justify-center flex-shrink-0`}>
                                     {renderProductImage(product)}
                                     <div className="w-8 h-8 bg-gray-200 rounded hidden items-center justify-center">

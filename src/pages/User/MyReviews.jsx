@@ -239,7 +239,7 @@ const ReviewedTab = () => {
                         {review.comment}
                     </p>
 
-                    {/* {review.images.length > 0 && (
+                    {review.images.length > 0 && (
                         <div className="flex gap-2 mt-2 flex-wrap">
                             {review.images.slice(0, 3).map((img, idx) => (
                                 <img
@@ -255,7 +255,7 @@ const ReviewedTab = () => {
                                 </div>
                             )}
                         </div>
-                    )} */}
+                    )}
 
                     <div className="text-sm text-gray-400 mt-3">
                         {review.reviewableType} | Đánh giá vào{" "}

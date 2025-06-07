@@ -93,5 +93,6 @@ export const {
     useUpdateTicketInTourMutation,
     useGetSearchSuggestionsQuery,
     useGetSearchResultsQuery,
-    useGetTourStatsQuery
+    useGetTourStatsQuery,
+    useLazyGetTourDetailsQuery
 } = tourApiSlice;

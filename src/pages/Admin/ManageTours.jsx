@@ -6,17 +6,13 @@ import { MdFilterList } from "react-icons/md";
 
 import { CgClose } from "react-icons/cg";
 import SelectItem from "../../components/SelectItem";
-import { Drawer, Slider, Checkbox } from "antd";
+import { Drawer, Slider, Checkbox, Pagination } from "antd";
 
 import { RiResetLeftLine } from "react-icons/ri";
 import { Box, CircularProgress } from "@mui/material";
 import { useGetToursQuery } from "../../redux/api/tourApiSlice";
 import TourCardAdmin from "../../components/TourCardAdmin";
-import {
-    CATEGORY_OPTIONS,
-    DURATION_OPTIONS,
-    LANGUAGE_OPTIONS,
-} from "../../constants/tour";
+import { CATEGORY_OPTIONS, DURATION_OPTIONS, LANGUAGE_OPTIONS } from "../../constants/tour";
 
 const ManageTours = () => {
     const navigate = useNavigate();
@@ -33,8 +29,8 @@ const ManageTours = () => {
     const onClose = () => setOpenFilter(false);
 
     const [sort, setSort] = useState(sortOptionList[0].value);
-
-    const [priceRange, setPriceRange] = useState([0, 2000000]);
+    const [page, setPage] = useState();
+    const [priceRange, setPriceRange] = useState([0, 20000000]);
     const [language, setLanguage] = useState([]);
     const [category, setCategory] = useState([]);
     const [duration, setDuration] = useState([]);
@@ -49,11 +45,16 @@ const ManageTours = () => {
         });
     };
 
+    const handleChangePage = (newPage) => {
+        setPage(newPage);
+    };
+
     const onResetFilter = () => {
         setLanguage([]);
         setCategory([]);
         setDuration([]);
-        setPriceRange([0, 2000000]);
+        setPriceRange([0, 20000000]);
+        setPage(1);
     };
 
     const {
@@ -67,6 +68,8 @@ const ManageTours = () => {
         maxPrice: priceRange[1],
         duration: duration?.join(","),
         sort: sort,
+        page,
+        limit: 6
     });
 
     const [search, setSearch] = useState("");
@@ -89,12 +92,7 @@ const ManageTours = () => {
 
     if (isLoading) {
         return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="100vh"
-            >
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
                 <CircularProgress />
             </Box>
         );
@@ -203,15 +201,13 @@ const ManageTours = () => {
                                 <Slider
                                     range
                                     min={0}
-                                    max={2000000}
+                                    max={20000000}
                                     step={100000}
                                     value={priceRange}
                                     onChange={setPriceRange}
                                     tooltip={{
                                         formatter: (value) =>
-                                            `${value.toLocaleString(
-                                                "vi-VN"
-                                            )} VND`,
+                                            `${value.toLocaleString("vi-VN")} VND`,
                                     }}
                                     styles={{
                                         track: { background: "#3b82f6" },
@@ -223,34 +219,25 @@ const ManageTours = () => {
                                 />
                                 <div className="flex items-center gap-2">
                                     <div className="border rounded-md px-2 py-1 text-sm flex-1">
-                                        {priceRange[0].toLocaleString("vi-VN")}{" "}
-                                        VND
+                                        {priceRange[0].toLocaleString("vi-VN")} VND
                                     </div>
                                     <div className="h-[1px] w-2 bg-gray-300"></div>
                                     <div className="border rounded-md px-2 py-1 text-sm">
-                                        {priceRange[1].toLocaleString("vi-VN")}{" "}
-                                        VND
+                                        {priceRange[1].toLocaleString("vi-VN")} VND
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <p className="font-semibold">
-                                    Dịch vụ ngôn ngữ
-                                </p>
+                                <p className="font-semibold">Dịch vụ ngôn ngữ</p>
                                 <div className="flex gap-3 mt-3 flex-wrap">
                                     {LANGUAGE_OPTIONS.map((languageOption) => (
                                         <div
                                             onClick={() =>
-                                                handleItemClick(
-                                                    languageOption.value,
-                                                    setLanguage
-                                                )
+                                                handleItemClick(languageOption.value, setLanguage)
                                             }
                                             key={languageOption.value}
                                             className={`cursor-pointer px-2 py-2 border rounded-lg ${
-                                                language.includes(
-                                                    languageOption.value
-                                                )
+                                                language.includes(languageOption.value)
                                                     ? " border-blue-500 text-blue-500 bg-white"
                                                     : ""
                                             }`}
@@ -267,17 +254,12 @@ const ManageTours = () => {
                                         <div
                                             key={durationOption.value}
                                             className={`cursor-pointer border px-2 py-2 rounded-lg ${
-                                                duration.includes(
-                                                    durationOption.value
-                                                )
+                                                duration.includes(durationOption.value)
                                                     ? " border-blue-500 text-blue-500 bg-white"
                                                     : ""
                                             }`}
                                             onClick={() =>
-                                                handleItemClick(
-                                                    durationOption.value,
-                                                    setDuration
-                                                )
+                                                handleItemClick(durationOption.value, setDuration)
                                             }
                                         >
                                             {durationOption.label}
@@ -298,22 +280,15 @@ const ManageTours = () => {
                     {searched ? (
                         filteredResults.length > 0 ? (
                             <>
-                                <p className="font-semibold text-[16px]">
-                                    Kết quả tìm kiếm
-                                </p>
+                                <p className="font-semibold text-[16px]">Kết quả tìm kiếm</p>
                                 <div className="grid grid-cols-3 gap-3">
                                     {filteredResults.map((tour, index) => (
-                                        <TourCardAdmin
-                                            tour={tour}
-                                            key={index}
-                                        ></TourCardAdmin>
+                                        <TourCardAdmin tour={tour} key={index}></TourCardAdmin>
                                     ))}
                                 </div>
                             </>
                         ) : (
-                            <p className="text-[14px] font-medium text-gray-500">
-                                Không tìm thấy
-                            </p>
+                            <p className="text-[14px] font-medium text-gray-500">Không tìm thấy</p>
                         )
                     ) : (
                         <div>
@@ -322,6 +297,16 @@ const ManageTours = () => {
                                     <TourCardAdmin tour={tour}></TourCardAdmin>
                                 ))}
                             </div>
+                            <Pagination
+                                total={tours?.totalTours}
+                                align="end"
+                                style={{
+                                    marginTop: "20px",
+                                }}
+                                pageSize={tours?.pageSize}
+                                current={page}
+                                onChange={handleChangePage}
+                            />
                         </div>
                     )}
                 </div>

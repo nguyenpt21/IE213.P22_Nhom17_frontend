@@ -41,8 +41,8 @@ const TourBooking = () => {
     } = useForm();
     const location = useLocation();
     const navigate = useNavigate();
-    const { ticket, tour, quantities } = location.state;
-    console.log(ticket, tour, quantities);
+    const { ticket, tour, quantities, passSelectedDate } = location.state;
+    console.log(ticket, tour, quantities, passSelectedDate);
 
     const [selectedMethod, setSelectedMethod] = useState(null);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -51,7 +51,7 @@ const TourBooking = () => {
         ? paymentOptions
         : paymentOptions.slice(0, 2);
 
-    const selectedDate = useSelector((state) => state.tourDate.selectedDate);
+    const selectedDate = dayjs(passSelectedDate.$d);
 
     const totalPrice = ticket.prices.reduce(
         (sum, p) => sum + p.price * quantities[p.priceType],

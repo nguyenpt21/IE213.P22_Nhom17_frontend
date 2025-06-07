@@ -80,21 +80,21 @@ const TourSearch = () => {
             ref={containerRef}
         >
             <div
-                className={`flex items-center gap-1 border-[3px] border-blue-300 rounded-lg h-14 pl-4 pr-1 py-1 text-lg hover:border-blue-400 focus-within:border-blue-400 caret-primary`}
+                className={`flex items-center gap-1 border-[3px] border-[#00c2ff] rounded-lg h-14 pl-4 pr-1 py-1 text-lg hover:border-blue-400 focus-within:border-blue-400 caret-primary`}
             >
                 <button>
-                    <BsSearch className="text-gray-400 w-5 h-5"></BsSearch>
+                    <BsSearch className="text-[#7193bc] w-5 h-5"></BsSearch>
                 </button>
                 <input
                     type="text"
                     placeholder="Bạn có ý tưởng gì cho chuyến đi không?"
-                    className="flex-1 h-full px-1 outline-none border-none bg-transparent"
+                    className="flex-1 h-full px-1 outline-none border-none bg-transparent placeholder:text-[#7193bc]"
                     onFocus={() => setIsFocused(true)}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 />
                 <button
-                    className="h-full w-[120px] text-lg bg-blue-600 text-white rounded-lg"
+                    className="h-full w-[120px] text-lg bg-[#0082da] text-white rounded-lg"
                     onClick={handleSearch}
                 >
                     Khám phá

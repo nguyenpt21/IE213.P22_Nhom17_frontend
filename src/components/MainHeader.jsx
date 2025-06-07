@@ -19,10 +19,7 @@ export const MainHeader = () => {
     // Handle click outside to close dropdown
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target)
-            ) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setShowDropdown(false);
             }
         };
@@ -56,6 +53,8 @@ export const MainHeader = () => {
             setCityOptions(final.slice(0, 12));
         }
     }, [cities, isCitiesLoading]);
+
+    const [openCities, setOpenCities] = useState(false);
 
     function NavItem({ icon, children, href, Dropdown, notLink }) {
         const [open, setOpen] = useState(false);
@@ -101,12 +100,7 @@ export const MainHeader = () => {
                 <nav className="flex space-x-4 items-center ml-auto font-semibold">
                     {!user ? (
                         <>
-                            <Link
-                                to="#"
-                                className="hover:text-primary transition-colors text-[14px] font-medium"
-                            >
-                                Xem gần đây
-                            </Link>
+                            
                             <Link
                                 to="/sign-up"
                                 className="hover:text-primary transition-colors text-[14px]"
@@ -121,18 +115,13 @@ export const MainHeader = () => {
                             </Link>
                         </>
                     ) : (
-                        <div
-                            className="flex items-center gap-2 relative"
-                            ref={dropdownRef}
-                        >
+                        <div className="flex items-center gap-2 relative" ref={dropdownRef}>
                             <div
                                 className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center cursor-pointer"
                                 onClick={() => setShowDropdown((prev) => !prev)}
                             >
                                 <span className="text-blue-500 text-lg font-bold">
-                                    {user.firstName?.charAt(0) ||
-                                        user.email?.charAt(0) ||
-                                        "U"}
+                                    {user.firstName?.charAt(0) || user.email?.charAt(0) || "U"}
                                 </span>
                             </div>
                             <span
@@ -156,19 +145,22 @@ export const MainHeader = () => {
             <div className="bg-white">
                 <div className="container mx-auto py-1">
                     <div className="flex items-center ">
-                        <NavItem
-                            icon={<GrLocation className="w-[16px] h-[16px]" />}
-                            notLink={true}
-                            children="Địa điểm muốn đến"
-                            Dropdown={
-                                <div className="absolute pt-1">
-                                    <div className="w-[1220px] border bg-white">
-                                        <div className="mx-auto grid grid-cols-4 p-4 gap-x-4 mt-1 gap-y-6">
+                        <div
+                            onMouseEnter={() => setOpenCities(true)}
+                            onMouseLeave={() => setOpenCities(false)}
+                            className="flex gap-2 items-center font-semibold text-[14px] px-3 py-2 rounded-full hover:bg-gray-100 cursor-pointer"
+                        >
+                            <GrLocation className="w-[16px] h-[16px]" />
+                            Địa điểm muốn đến
+                            {openCities && (
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 w-screen">
+                                    <div className="max-w-screen-xl mx-auto border bg-white">
+                                        <div className="grid grid-cols-4 p-4 gap-x-4 mt-1 gap-y-6">
                                             {cityOptions.map((city, index) => (
-                                                <Link 
-                                                to={`/city/${city._id}`}
+                                                <Link
+                                                    to={`/city/${city._id}`}
                                                     key={index}
-                                                    className=" flex gap-2 items-center"
+                                                    className="flex gap-2 items-center"
                                                 >
                                                     <img
                                                         src={city.img}
@@ -186,23 +178,43 @@ export const MainHeader = () => {
                                         </div>
                                     </div>
                                 </div>
-                            }
-                        />
+                            )}
+                        </div>
+
                         {NAV_LINKS.map((item, index) => (
                             <NavItem
                                 key={index}
                                 children={item.title}
                                 href={item.href}
                                 Dropdown={
-                                    item.services.length > 0 && (
-                                        <Dropdown data={item.services} />
-                                    )
+                                    item.services.length > 0 && <Dropdown data={item.services} />
                                 }
                             />
                         ))}
                     </div>
                 </div>
             </div>
+            {/* {openCities && (
+                <div className="">
+                    <div className="w-screen border bg-white">
+                        <div className="mx-auto grid grid-cols-4 p-4 gap-x-4 mt-1 gap-y-6">
+                            {cityOptions.map((city, index) => (
+                                <Link
+                                    to={`/city/${city._id}`}
+                                    key={index}
+                                    className=" flex gap-2 items-center"
+                                >
+                                    <img src={city.img} alt="" className="w-12 h-12 rounded-full" />
+                                    <div className="flex flex-col justify-between">
+                                        <span className="text-gray-400">Vui chơi giải trí</span>
+                                        <h3>{city.name}</h3>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )} */}
         </header>
     );
 };

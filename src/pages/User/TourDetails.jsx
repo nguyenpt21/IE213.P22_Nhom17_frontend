@@ -43,11 +43,10 @@ const TourDetails = () => {
 
     const [isCalendarModal, setIsCalendarModal] = useState(false);
 
-    const { data: tourRiview, isLoading: isLoadingTourReviews } =
-        useGetReviewByProductIdQuery({
-            reviewableId: params._id,
-            reviewableType: "Tour",
-        });
+    const { data: tourRiview, isLoading: isLoadingTourReviews } = useGetReviewByProductIdQuery({
+        reviewableId: params._id,
+        reviewableType: "Tour",
+    });
 
     const CalendarSelection = () => {
         const generateMonthDays = (baseMonth) => {
@@ -74,10 +73,7 @@ const TourDetails = () => {
         const [monthOffset, setMonthOffset] = useState(0);
 
         const baseMonth = today.startOf("month").add(monthOffset, "month");
-        const months = [
-            generateMonthDays(baseMonth),
-            generateMonthDays(baseMonth.add(1, "month")),
-        ];
+        const months = [generateMonthDays(baseMonth), generateMonthDays(baseMonth.add(1, "month"))];
 
         const handleNextMonth = () => {
             if (monthOffset < 3) {
@@ -125,16 +121,12 @@ const TourDetails = () => {
                             className="flex items-center justify-center border rounded-lg gap-2 bg-white shadow text-[#0194f3] flex-shrink-0 w-[128px] h-[70px] p-3"
                         >
                             <MdOutlineCalendarMonth className="w-6 h-6"></MdOutlineCalendarMonth>
-                            <span className="font-semibold text-lg">
-                                Xem lịch
-                            </span>
+                            <span className="font-semibold text-lg">Xem lịch</span>
                         </div>
                     )}
 
                     <Modal
-                        title={
-                            <p className="font-semibold text-lg">Chọn ngày</p>
-                        }
+                        title={<p className="font-semibold text-lg">Chọn ngày</p>}
                         open={isCalendarModal}
                         onCancel={() => setIsCalendarModal(false)}
                         footer={null}
@@ -149,9 +141,7 @@ const TourDetails = () => {
                                 disabled={!canGoBack}
                                 onClick={handlePrevMonth}
                                 className={`px-3 py-1 text-lg rounded absolute ${
-                                    canGoBack
-                                        ? "text-[#0194f3]"
-                                        : "text-[#cdd0d1]"
+                                    canGoBack ? "text-[#0194f3]" : "text-[#cdd0d1]"
                                 }`}
                             >
                                 <IoIosArrowBack></IoIosArrowBack>
@@ -160,9 +150,7 @@ const TourDetails = () => {
                                 onClick={handleNextMonth}
                                 disabled={!canGoForward}
                                 className={`px-3 py-1 text-lg rounded absolute right-0 ${
-                                    canGoForward
-                                        ? "text-[#0194f3]"
-                                        : "text-[#cdd0d1]"
+                                    canGoForward ? "text-[#0194f3]" : "text-[#cdd0d1]"
                                 }`}
                             >
                                 <IoIosArrowForward></IoIosArrowForward>
@@ -173,45 +161,28 @@ const TourDetails = () => {
                                         {month.monthLabel}
                                     </h3>
                                     <div className="grid grid-cols-7 text-center text-gray-600 font-medium mb-1">
-                                        {[
-                                            "T2",
-                                            "T3",
-                                            "T4",
-                                            "T5",
-                                            "T6",
-                                            "T7",
-                                            "CN",
-                                        ].map((d) => (
+                                        {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((d) => (
                                             <div key={d}>{d}</div>
                                         ))}
                                     </div>
                                     <div className="flex-1 grid grid-cols-7 text-center gap-y-1">
                                         {month.days.map((day, idx2) => {
-                                            const isPast =
-                                                !day ||
-                                                day.isBefore(today, "day");
+                                            const isPast = !day || day.isBefore(today, "day");
                                             const isSelected =
                                                 day &&
                                                 selectedDate &&
-                                                day.isSame(
-                                                    selectedDate,
-                                                    "date"
-                                                );
+                                                day.isSame(selectedDate, "date");
 
                                             return (
                                                 <div
                                                     key={idx2}
-                                                    onClick={() =>
-                                                        handleSelect(day)
-                                                    }
+                                                    onClick={() => handleSelect(day)}
                                                     className={`px-3 py-2 rounded-lg transition-all ${
                                                         isPast
                                                             ? "text-gray-400"
                                                             : "cursor-pointer hover:bg-blue-100"
                                                     } ${
-                                                        isSelected
-                                                            ? "bg-[#0194f3] text-white"
-                                                            : ""
+                                                        isSelected ? "bg-[#0194f3] text-white" : ""
                                                     }`}
                                                 >
                                                     {day && (
@@ -292,9 +263,7 @@ const TourDetails = () => {
         return (
             <div className="flex items-start px-4 py-2 border rounded-lg">
                 <div className="w-[72%]">
-                    <p className="text-xl font-bold pr-[60px]">
-                        {ticket.title}
-                    </p>
+                    <p className="text-xl font-bold pr-[60px]">{ticket.title}</p>
                     <p
                         onClick={showViewModal}
                         className="text-blue-500 font-semibold mt-4 cursor-pointer"
@@ -317,43 +286,33 @@ const TourDetails = () => {
                                 fontSize: "16px",
                                 fontWeight: 500,
                                 padding: "0",
-                                overflow: "hidden",
+                                overflow: "hidden"
                             },
                         }}
                     >
-                        <div className="text-base h-[460px] relative overflow-auto">
+                        <div className="text-base h-[460px] overflow-auto">
                             <div className="px-5">
-                                <p className=" text-gray-500">
-                                    {ticket.description}
-                                </p>
-                                <div className="sticky top-[172px] flex justify-between py-4 border-t-[1.5px] mt-4 border-dashed">
+                                <p className=" text-gray-500">{ticket.description}</p>
+                                <div className="sticky top-0 flex justify-between py-4 border-t-[1.5px] mt-4 border-dashed">
                                     <div className="text-2xl font-bold text-orange_primary">
-                                        {ticket.prices[0].price.toLocaleString(
-                                            "vi-VN"
-                                        )}{" "}
-                                        VND
+                                        {ticket.prices[0].price.toLocaleString("vi-VN")} VND
                                     </div>
                                     <div
                                         onClick={() => {
                                             if (!selectedDate) {
                                                 setIsCalendarModal(true);
                                             } else {
-                                                navigate(
-                                                    `/tour/${data.tour._id}/${ticket._id}`,
-                                                    {
-                                                        state: {
-                                                            ticket,
+                                                navigate(`/tour/${data.tour._id}/${ticket._id}`, {
+                                                    state: {
+                                                        ticket,
 
-                                                            tour: {
-                                                                id: data.tour
-                                                                    ._id,
-                                                                name: data.tour
-                                                                    .name,
-                                                                img: `${CLOUDINARY_BASE_URL}/${data.tour.images[0]}`,
-                                                            },
+                                                        tour: {
+                                                            id: data.tour._id,
+                                                            name: data.tour.name,
+                                                            img: `${CLOUDINARY_BASE_URL}/${data.tour.images[0]}`,
                                                         },
-                                                    }
-                                                );
+                                                    },
+                                                });
                                             }
                                         }}
                                         className="px-5 py-2 text-center bg-primary font-semibold text-white rounded-md cursor-pointer"
@@ -369,13 +328,8 @@ const TourDetails = () => {
                                             {sections.map((label, idx) => (
                                                 <button
                                                     key={idx}
-                                                    ref={(el) =>
-                                                        (itemRefs.current[idx] =
-                                                            el)
-                                                    }
-                                                    onClick={() =>
-                                                        handleClick(idx)
-                                                    }
+                                                    ref={(el) => (itemRefs.current[idx] = el)}
+                                                    onClick={() => handleClick(idx)}
                                                     className={` font-medium ${
                                                         idx === activeIndex
                                                             ? "text-primary"
@@ -412,53 +366,37 @@ const TourDetails = () => {
                                     ref={voucherValidityRef}
                                     className="mt-4 px-5 border-t-[4px] py-2 border-gray-100"
                                 >
-                                    <p className="text-xl font-bold">
-                                        Hiệu lực vourcher
-                                    </p>
+                                    <p className="text-xl font-bold">Hiệu lực vourcher</p>
                                     <ul className="px-3 mt-2">
-                                        {ticket.voucherValidity
-                                            .split("\n")
-                                            .map((v, index) => (
-                                                <li
-                                                    key={index}
-                                                    className="flex gap-3"
-                                                >
-                                                    <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px]"></span>
-                                                    {v}
-                                                </li>
-                                            ))}
+                                        {ticket.voucherValidity.split("\n").map((v, index) => (
+                                            <li key={index} className="flex gap-3">
+                                                <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px]"></span>
+                                                {v}
+                                            </li>
+                                        ))}
                                     </ul>
                                 </div>
                                 <div
                                     ref={redemptionPolicyRef}
                                     className="mt-4 px-5 border-t-[4px] py-2 border-gray-100"
                                 >
-                                    <p className="text-xl font-bold mb-3">
-                                        Phương thức quy đổi
-                                    </p>
+                                    <p className="text-xl font-bold mb-3">Phương thức quy đổi</p>
                                     <div className="border-t-[1.5px] border-dashed">
-                                        <p className="text-xl font-bold mt-3">
-                                            Cách đổi phiếu
-                                        </p>
+                                        <p className="text-xl font-bold mt-3">Cách đổi phiếu</p>
                                         <div
                                             className="dot ticket-details px-3 mt-2 font-semibold"
                                             dangerouslySetInnerHTML={{
-                                                __html: ticket.redemptionPolicy
-                                                    .method,
+                                                __html: ticket.redemptionPolicy.method,
                                             }}
                                         />
                                     </div>
                                     {ticket.redemptionPolicy.location && (
                                         <div className="border-t-[1.5px] border-dashed">
-                                            <p className="text-xl font-bold mt-3">
-                                                Nơi đổi phiếu
-                                            </p>
+                                            <p className="text-xl font-bold mt-3">Nơi đổi phiếu</p>
                                             <div
                                                 className="dot ticket-details px-3 mt-2 font-semibold"
                                                 dangerouslySetInnerHTML={{
-                                                    __html: ticket
-                                                        .redemptionPolicy
-                                                        .location,
+                                                    __html: ticket.redemptionPolicy.location,
                                                 }}
                                             />
                                         </div>
@@ -468,37 +406,27 @@ const TourDetails = () => {
                                     ref={cancellationPolicyRef}
                                     className="mt-4 px-5 border-t-[4px] py-2 border-gray-100"
                                 >
-                                    <p className="text-xl font-bold">
-                                        Hoàn tiền và đổi lịch
-                                    </p>
+                                    <p className="text-xl font-bold">Hoàn tiền và đổi lịch</p>
                                     <div className="px-3 mt-2 mb-3">
-                                        {ticket.cancellationPolicy
-                                            .isReschedule ? (
+                                        {ticket.cancellationPolicy.isReschedule ? (
                                             <p>Có thể đổi lịch</p>
                                         ) : (
                                             <p>Không thể đổi lịch</p>
                                         )}
                                         {ticket.cancellationPolicy.isRefund ? (
                                             <p>
-                                                Chỉ có thể yêu cầu xử lý hoàn
-                                                tiền trước ngày chọn.
+                                                Chỉ có thể yêu cầu xử lý hoàn tiền trước ngày chọn.
                                             </p>
                                         ) : (
                                             <p>Không thể đổi lịch</p>
                                         )}
                                     </div>
-                                    {ticket.cancellationPolicy
-                                        .reschedulePolicy && (
+                                    {ticket.cancellationPolicy.reschedulePolicy && (
                                         <div className="border-t-[1.5px] border-dashed">
                                             <p className="text-xl font-bold mt-3">
                                                 Chính sách đổi lịch
                                             </p>
-                                            <p>
-                                                {
-                                                    ticket.cancellationPolicy
-                                                        .reschedulePolicy
-                                                }
-                                            </p>
+                                            <p>{ticket.cancellationPolicy.reschedulePolicy}</p>
                                         </div>
                                     )}
                                     {ticket.cancellationPolicy.isRefund && (
@@ -510,8 +438,7 @@ const TourDetails = () => {
                                                 <li className="">
                                                     <div className="flex gap-3">
                                                         <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px] flex-grow-0 flex-shrink-0"></span>
-                                                        Yêu cầu hoàn tiền muộn
-                                                        nhất là
+                                                        Yêu cầu hoàn tiền muộn nhất là
                                                     </div>
                                                     <ul className="ml-4">
                                                         {ticket.cancellationPolicy.refundPolicy.refundPercentage.map(
@@ -519,20 +446,9 @@ const TourDetails = () => {
                                                                 <li>
                                                                     <div className="flex gap-3">
                                                                         <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px] flex-grow-0 flex-shrink-0"></span>
-                                                                        {
-                                                                            r.daysBefore
-                                                                        }{" "}
-                                                                        ngày
-                                                                        trước
-                                                                        ngày đi
-                                                                        đã chọn
-                                                                        của bạn
-                                                                        để nhận
-                                                                        được{" "}
-                                                                        {
-                                                                            r.percent
-                                                                        }
-                                                                        % hoàn
+                                                                        {r.daysBefore} ngày trước
+                                                                        ngày đi đã chọn của bạn để
+                                                                        nhận được {r.percent}% hoàn
                                                                         tiền
                                                                     </div>
                                                                 </li>
@@ -543,10 +459,7 @@ const TourDetails = () => {
                                                 {ticket.cancellationPolicy.refundPolicy.description
                                                     .split("\n")
                                                     .map((r, index) => (
-                                                        <li
-                                                            key={index}
-                                                            className="flex gap-3"
-                                                        >
+                                                        <li key={index} className="flex gap-3">
                                                             <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px] flex-grow-0 flex-shrink-0"></span>
                                                             {r}
                                                         </li>
@@ -559,9 +472,7 @@ const TourDetails = () => {
                                     ref={termsAndConditionsRef}
                                     className="mt-4 px-5 border-t-[4px] py-2 border-gray-100"
                                 >
-                                    <p className="text-xl font-bold">
-                                        Điều khoản & Điều kiện
-                                    </p>
+                                    <p className="text-xl font-bold">Điều khoản & Điều kiện</p>
                                     <div
                                         className="dot ticket-overview px-3"
                                         dangerouslySetInnerHTML={{
@@ -582,19 +493,16 @@ const TourDetails = () => {
                             if (!selectedDate) {
                                 setIsCalendarModal(true);
                             } else {
-                                navigate(
-                                    `/tour/${data.tour._id}/${ticket._id}`,
-                                    {
-                                        state: {
-                                            ticket,
-                                            tour: {
-                                                id: data.tour._id,
-                                                name: data.tour.name,
-                                                img: `${CLOUDINARY_BASE_URL}/${data.tour.images[0]}`,
-                                            },
+                                navigate(`/tour/${data.tour._id}/${ticket._id}`, {
+                                    state: {
+                                        ticket,
+                                        tour: {
+                                            id: data.tour._id,
+                                            name: data.tour.name,
+                                            img: `${CLOUDINARY_BASE_URL}/${data.tour.images[0]}`,
                                         },
-                                    }
-                                );
+                                    },
+                                });
                             }
                         }}
                         className="w-full py-2 text-center mt-[28px] bg-primary font-semibold text-white rounded-md cursor-pointer"
@@ -606,28 +514,32 @@ const TourDetails = () => {
         );
     };
 
+    const ticketSectionRef = useRef(null);
+
+    const scrollToTicketSection = () => {
+        ticketSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    const reviewSectionRef = useRef(null);
+
+    const scrollToReviwSection = () => {
+        reviewSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
     if (isLoading || isLoadingTourReviews)
         return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="100vh"
-            >
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
                 <CircularProgress />
             </Box>
         );
-        
+
     const latestByUser = new Map();
 
     for (const item of tourRiview.reviews) {
         const userId = item.userId._id;
         const existing = latestByUser.get(userId);
 
-        if (
-            !existing ||
-            new Date(item.createdAt) > new Date(existing.createdAt)
-        ) {
+        if (!existing || new Date(item.createdAt) > new Date(existing.createdAt)) {
             latestByUser.set(userId, item);
         }
     }
@@ -636,23 +548,28 @@ const TourDetails = () => {
     return (
         <div className="relative mb-20">
             <div className="bg-[#329ee5] h-[300px] w-full absolute top-0 -z-10 rounded-br-[48px]"></div>
-            <div className="w-[75%] mx-auto bg-transparent">
-                <TourInformationUser tourData={data.tour}></TourInformationUser>
-                <div className="mt-2 p-6 border rounded-lg">
+            <div className="w-[80%] mx-auto bg-transparent">
+                <TourInformationUser
+                    tourData={{
+                        ...data.tour,
+                        numReview: tourRiview.reviews.length,
+                        reviews: latestReview,
+                    }}
+                    scrollToTicket={scrollToTicketSection}
+                    scrollToReview={scrollToReviwSection}
+                ></TourInformationUser>
+                <div ref={ticketSectionRef} className="mt-2 p-6 border rounded-lg shadow-md">
                     <div className="flex justify-between items-center">
                         <p className="font-bold text-xl">Có vé trống cho bạn</p>
                         <CalendarSelection></CalendarSelection>
                     </div>
-                    <div className="mt-4 space-y-4">
+                    <div className="mt-4 space-y-4 ">
                         {data.tickets.map((ticket, index) => (
-                            <TicketCard
-                                key={index}
-                                ticket={ticket}
-                            ></TicketCard>
+                            <TicketCard key={index} ticket={ticket}></TicketCard>
                         ))}
                     </div>
                 </div>
-                <div className="mt-6">
+                <div className="mt-6" ref={reviewSectionRef}>
                     <p className="text-2xl font-bold">Đánh giá</p>
                     <div className="flex mt-4 gap-4 items-center">
                         <div className="text-3xl font-bold">
@@ -662,9 +579,7 @@ const TourDetails = () => {
                         <div className=" text-yellow-400 flex items-center gap-2">
                             <StarRating
                                 rating={tourRiview.averageRating}
-                                className={
-                                    "text-yellow-400 flex items-center gap-2"
-                                }
+                                className={"text-yellow-400 flex items-center gap-2"}
                             ></StarRating>
                         </div>
                         <p className="text-base">
@@ -674,7 +589,7 @@ const TourDetails = () => {
                     <div className="flex flex-col gap-5 mt-5">
                         {latestReview.map((r, index) => (
                             <div className="text-sm w-full min-h-[200px] flex gap-4 items-start rounded-lg p-4 shadow">
-                                <div>
+                                <div className="w-[215px]">
                                     <div className="flex items-center gap-2">
                                         {r.userId.profilePicture ? (
                                             <img
@@ -684,30 +599,45 @@ const TourDetails = () => {
                                         ) : (
                                             <div className="w-[44px] h-[44px] rounded-full flex items-center justify-center bg-[#8dbd8b] text-gray-200">
                                                 <span>
-                                                    {r.userId.firstName[0]}{" "}
-                                                    {r.userId.lastName[0]}
+                                                    {r.userId.firstName[0]} {r.userId.lastName[0]}
                                                 </span>
                                             </div>
                                         )}
 
                                         <div className="flex flex-col gap-0.5">
                                             <p className="font-semibold">
-                                                {r.userId.firstName}{" "}
-                                                {r.userId.lastName}
+                                                {r.userId.firstName} {r.userId.lastName}
                                             </p>
                                             <p className="text-gray-400">
-                                                {r.createdAt}
+                                                {dayjs(r.createdAt).format("DD/MM/YYYY")}
                                             </p>
                                         </div>
                                     </div>
                                     <StarRating
                                         rating={r.rating}
-                                        className={
-                                            "text-yellow-400 flex items-center gap-2 mt-2"
-                                        }
+                                        className={"text-yellow-400 flex items-center gap-2 mt-2"}
                                     ></StarRating>
                                 </div>
-                                <p className="">{r.comment}</p>
+                                <div className="flex-1 text-base">
+                                    <p className="">{r.comment}</p>
+                                    {r.images.length > 0 && (
+                                        <div className="flex gap-2 mt-2 flex-wrap">
+                                            {r.images.slice(0, 3).map((img, idx) => (
+                                                <img
+                                                    key={idx}
+                                                    src={`${CLOUDINARY_BASE_URL}/${img}`}
+                                                    alt={`r-img-${idx}`}
+                                                    className="w-24 h-24 object-cover rounded-md"
+                                                />
+                                            ))}
+                                            {r.images.length > 3 && (
+                                                <div className="w-24 h-24 bg-gray-100 rounded-md flex items-center justify-center text-gray-600 text-sm font-medium">
+                                                    +{r.images.length - 3}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>
