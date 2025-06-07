@@ -31,7 +31,7 @@ const SearchResultsPage = () => {
     const [category, setCategory] = useState([]);
     const [duration, setDuration] = useState([]);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(1);
+    const [pageSize, setPageSize] = useState(6);
     const handleFiler = (item, setFilter) => {
         setFilter((prev) => {
             if (prev.includes(item)) {
@@ -204,7 +204,7 @@ const SearchResultsPage = () => {
                                     style={{
                                         marginTop: "20px",
                                     }}
-                                    pageSize={1}
+                                    pageSize={6}
                                     current={currentPage}
                                     onChange={handlePageChange}
                                 ></Pagination>
