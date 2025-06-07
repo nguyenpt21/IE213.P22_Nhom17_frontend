@@ -84,7 +84,7 @@ const Home = () => {
             label: (
                 <div
                     className="flex items-center min-w-[150px] text-base"
-                    onClick={() => navigate(`/user/customer-suppor`)}
+                    onClick={() => navigate(`/user/customer-support`)}
                 >
                     Chat với nhân viên
                 </div>

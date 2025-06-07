@@ -541,6 +541,7 @@ const CityDetail = () => {
 
             {/* Review */}
             <div className="mb-8">
+                <p>Mọi người nghĩ gì về các dịch vụ ở {city.name}</p>
                 <GeneralCarousel responsive={responsive}>
                     {reviews.data.map((review, index) => (
                         <div className="h-[250px] p-6 border border-gray-200 rounded-lg">
