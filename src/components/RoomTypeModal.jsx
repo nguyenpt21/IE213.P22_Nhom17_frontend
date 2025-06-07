@@ -177,8 +177,8 @@ const RoomTypeModal = ({
       }}
     >
       {contextMessageHolder}
-      <p className="px-5 pb-2 pt-3 text-[18px] font-semibold">Thêm loại phòng</p>
-      <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto max-h-[80vh] p-5">
+      <p className="px-5 pb-2 pt-3 text-[18px] font-semibold">{editingRoomType ? "Sửa loại phòng" : "Thêm loại phòng"}</p>
+      <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto max-h-[80vh] px-5 pb-4">
         <FormInput
           label={"Tên loại phòng"}
           name={"name"}

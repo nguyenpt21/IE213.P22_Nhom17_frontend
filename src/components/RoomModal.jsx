@@ -52,14 +52,25 @@ const RoomModal = ({
     <Modal
       open={visible}
       width={"50%"}
-      height={"100%"}
+      height={"80%"}
       footer={null}
       onCancel={onCancel}
-      style={{top: "20px"}}
       centered
+      styles={{
+        content: {
+            padding: 0,
+            overflow: "hidden",
+        },
+        body: {
+          fontSize: "16px",
+        },
+        footer: {
+          padding: "16px",
+        },
+      }}
     >
-      <p className="text-[18px] font-semibold mb-1">Thêm phòng</p>
-      <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto max-h-[80vh]">
+      <p className="text-[18px] font-semibold mb-1 px-4 pt-2">{editingRoom ? "Sửa phòng" : "Thêm phòng" }</p>
+      <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto max-h-[80vh] px-4 pt-2 pb-4">
         <FormInput
           label={"Tên phòng"}
           name={"bedType"}

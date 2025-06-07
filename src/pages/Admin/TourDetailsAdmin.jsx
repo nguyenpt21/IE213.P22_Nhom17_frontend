@@ -52,8 +52,7 @@ const TourDetailsAdmin = () => {
     };
 
     const TicketCard = ({ ticket }) => {
-        const [isUpdateTicketModalOpen, setIsUpdateTicketModalOpen] =
-            useState(false);
+        const [isUpdateTicketModalOpen, setIsUpdateTicketModalOpen] = useState(false);
 
         const handleCancelUpdateTicketModal = () => {
             setIsUpdateTicketModalOpen(false);
@@ -71,8 +70,7 @@ const TourDetailsAdmin = () => {
             setIsViewModalOpen(false);
         };
 
-        const [isDeleteTicketModalOpen, setIsDeleteTicketModalOpen] =
-            useState(false);
+        const [isDeleteTicketModalOpen, setIsDeleteTicketModalOpen] = useState(false);
 
         const handleDeleteTicketFromTour = async () => {
             try {
@@ -94,9 +92,7 @@ const TourDetailsAdmin = () => {
         return (
             <div className="flex justify-between items-start px-4 py-2 border rounded-lg">
                 <div>
-                    <p className="text-lg font-semibold w-[70%]">
-                        {ticket.title}
-                    </p>
+                    <p className="text-lg font-semibold w-[70%]">{ticket.title}</p>
                     <p
                         onClick={showViewModal}
                         className="text-blue-500 font-semibold mt-2 cursor-pointer"
@@ -105,23 +101,28 @@ const TourDetailsAdmin = () => {
                     </p>
                     <Modal
                         title={
-                            <div className="font-semibold text-xl w-[650px]">
-                                {ticket.title}
-                            </div>
+                            <div className="font-semibold text-xl w-[650px] px-4 pt-2">{ticket.title}</div>
                         }
                         open={isViewModalOpen}
                         onCancel={handleCancelViewModal}
                         footer={null}
                         width={750}
-                        style={{
-                            fontSize: "16px",
-                            fontWeight: 500,
+                        centered
+                        styles={{
+                            content: {
+                                padding: 0,
+                                overflow: "hidden",
+                            },
+                            body: {
+                                fontSize: "16px",
+                            },
+                            footer: {
+                                padding: "16px",
+                            },
                         }}
                     >
-                        <div className="text-base ">
-                            <p className=" text-gray-500">
-                                {ticket.description}
-                            </p>
+                        <div className="p-4 h-[500px] overflow-auto">
+                            <p className=" text-gray-500">{ticket.description}</p>
                             <div className="mt-4">
                                 <p className="text-xl font-bold">Tổng quan</p>
                                 <div
@@ -132,9 +133,7 @@ const TourDetailsAdmin = () => {
                                 />
                             </div>
                             <div className="mt-4">
-                                <p className="text-xl font-bold">
-                                    Các loại giá vé
-                                </p>
+                                <p className="text-xl font-bold">Các loại giá vé</p>
                                 <div className="mt-2 space-y-2">
                                     {ticket.prices.map((p, index) => (
                                         <div
@@ -142,31 +141,18 @@ const TourDetailsAdmin = () => {
                                             className="flex justify-between px-2 py-2 border rounded-lg"
                                         >
                                             <div>
-                                                <p className="text-lg ">
-                                                    {p.priceType}
-                                                </p>
+                                                <p className="text-lg ">{p.priceType}</p>
                                                 {p.notes && (
-                                                    <p className="text-gray-500">
-                                                        {p.notes}
-                                                    </p>
+                                                    <p className="text-gray-500">{p.notes}</p>
                                                 )}
                                             </div>
                                             <div>
                                                 <p className="text-orange-400">
-                                                    {p.price.toLocaleString(
-                                                        "vi-VN"
-                                                    )}{" "}
-                                                    VND
+                                                    {p.price.toLocaleString("vi-VN")} VND
                                                 </p>
                                                 <div className="flex gap-2 font-normal">
-                                                    <p>
-                                                        Số lượng đặt tối thiểu:{" "}
-                                                        {p.minPerBooking}
-                                                    </p>
-                                                    <p>
-                                                        Số lượng đặt tối đa:{" "}
-                                                        {p.maxPerBooking}
-                                                    </p>
+                                                    <p>Số lượng đặt tối thiểu: {p.minPerBooking}</p>
+                                                    <p>Số lượng đặt tối đa: {p.maxPerBooking}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -174,58 +160,41 @@ const TourDetailsAdmin = () => {
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <p className="text-xl font-bold">
-                                    Hiệu lực vourcher
-                                </p>
+                                <p className="text-xl font-bold">Hiệu lực vourcher</p>
                                 <ul className="px-3 mt-2">
-                                    {ticket.voucherValidity
-                                        .split("\n")
-                                        .map((v, index) => (
-                                            <li
-                                                key={index}
-                                                className="flex gap-3"
-                                            >
-                                                <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px]"></span>
-                                                {v}
-                                            </li>
-                                        ))}
+                                    {ticket.voucherValidity.split("\n").map((v, index) => (
+                                        <li key={index} className="flex gap-3">
+                                            <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px]"></span>
+                                            {v}
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                             <div className="mt-4">
-                                <p className="text-xl font-bold mb-3">
-                                    Phương thức quy đổi
-                                </p>
+                                <p className="text-xl font-bold mb-3">Phương thức quy đổi</p>
                                 <div className="border-t-[1.5px] border-dashed">
-                                    <p className="text-xl font-bold mt-3">
-                                        Cách đổi phiếu
-                                    </p>
+                                    <p className="text-xl font-bold mt-3">Cách đổi phiếu</p>
                                     <div
                                         className="dot ticket-details px-3 mt-2 font-semibold"
                                         dangerouslySetInnerHTML={{
-                                            __html: ticket.redemptionPolicy
-                                                .method,
+                                            __html: ticket.redemptionPolicy.method,
                                         }}
                                     />
                                 </div>
                                 {ticket.redemptionPolicy.location && (
                                     <div className="border-t-[1.5px] border-dashed">
-                                        <p className="text-xl font-bold mt-3">
-                                            Nơi đổi phiếu
-                                        </p>
+                                        <p className="text-xl font-bold mt-3">Nơi đổi phiếu</p>
                                         <div
                                             className="dot ticket-details px-3 mt-2 font-semibold"
                                             dangerouslySetInnerHTML={{
-                                                __html: ticket.redemptionPolicy
-                                                    .location,
+                                                __html: ticket.redemptionPolicy.location,
                                             }}
                                         />
                                     </div>
                                 )}
                             </div>
                             <div className="mt-4">
-                                <p className="text-xl font-bold">
-                                    Hoàn tiền và đổi lịch
-                                </p>
+                                <p className="text-xl font-bold">Hoàn tiền và đổi lịch</p>
                                 <div className="px-3 mt-2 mb-3">
                                     {ticket.cancellationPolicy.isReschedule ? (
                                         <p>Có thể đổi lịch</p>
@@ -233,10 +202,7 @@ const TourDetailsAdmin = () => {
                                         <p>Không thể đổi lịch</p>
                                     )}
                                     {ticket.cancellationPolicy.isRefund ? (
-                                        <p>
-                                            Chỉ có thể yêu cầu xử lý hoàn tiền
-                                            trước ngày chọn.
-                                        </p>
+                                        <p>Chỉ có thể yêu cầu xử lý hoàn tiền trước ngày chọn.</p>
                                     ) : (
                                         <p>Không thể đổi lịch</p>
                                     )}
@@ -246,12 +212,7 @@ const TourDetailsAdmin = () => {
                                         <p className="text-xl font-bold mt-3">
                                             Chính sách đổi lịch
                                         </p>
-                                        <p>
-                                            {
-                                                ticket.cancellationPolicy
-                                                    .reschedulePolicy
-                                            }
-                                        </p>
+                                        <p>{ticket.cancellationPolicy.reschedulePolicy}</p>
                                     </div>
                                 )}
                                 {ticket.cancellationPolicy.isRefund && (
@@ -263,8 +224,7 @@ const TourDetailsAdmin = () => {
                                             <li className="">
                                                 <div className="flex gap-3">
                                                     <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px] flex-grow-0 flex-shrink-0"></span>
-                                                    Yêu cầu hoàn tiền muộn nhất
-                                                    là
+                                                    Yêu cầu hoàn tiền muộn nhất là
                                                 </div>
                                                 <ul className="ml-4">
                                                     {ticket.cancellationPolicy.refundPolicy.refundPercentage.map(
@@ -272,15 +232,9 @@ const TourDetailsAdmin = () => {
                                                             <li>
                                                                 <div className="flex gap-3">
                                                                     <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px] flex-grow-0 flex-shrink-0"></span>
-                                                                    {
-                                                                        r.daysBefore
-                                                                    }{" "}
-                                                                    ngày trước
-                                                                    ngày đi đã
-                                                                    chọn của bạn
-                                                                    để nhận được{" "}
-                                                                    {r.percent}%
-                                                                    hoàn tiền
+                                                                    {r.daysBefore} ngày trước ngày
+                                                                    đi đã chọn của bạn để nhận được{" "}
+                                                                    {r.percent}% hoàn tiền
                                                                 </div>
                                                             </li>
                                                         )
@@ -290,10 +244,7 @@ const TourDetailsAdmin = () => {
                                             {ticket.cancellationPolicy.refundPolicy.description
                                                 .split("\n")
                                                 .map((r, index) => (
-                                                    <li
-                                                        key={index}
-                                                        className="flex gap-3"
-                                                    >
+                                                    <li key={index} className="flex gap-3">
                                                         <span className="w-[7px] h-[7px] rounded-full bg-[#1f1f1f] mt-[10px] flex-grow-0 flex-shrink-0"></span>
                                                         {r}
                                                     </li>
@@ -303,9 +254,7 @@ const TourDetailsAdmin = () => {
                                 )}
                             </div>
                             <div className="mt-4">
-                                <p className="text-xl font-bold">
-                                    Điều khoản & Điều kiện
-                                </p>
+                                <p className="text-xl font-bold">Điều khoản & Điều kiện</p>
                                 <div
                                     className="dot ticket-overview px-3"
                                     dangerouslySetInnerHTML={{
@@ -361,12 +310,8 @@ const TourDetailsAdmin = () => {
 
     if (isLoading) return <div>Loading...</div>;
 
-    const {
-        voucherValidity,
-        redemptionPolicy,
-        cancellationPolicy,
-        termsAndConditions,
-    } = data.tickets[0];
+    const { voucherValidity, redemptionPolicy, cancellationPolicy, termsAndConditions } =
+        data.tickets[0];
     const defaultPolicy = {
         voucherValidity,
         redemptionPolicy,
@@ -406,9 +351,7 @@ const TourDetailsAdmin = () => {
                     <div className="flex justify-between">
                         <div className="flex items-center space-x-2">
                             <div className="w-2 h-7 bg-blue-500 rounded"></div>
-                            <h2 className="text-[20px] font-semibold">
-                                Danh sách vé
-                            </h2>
+                            <h2 className="text-[20px] font-semibold">Danh sách vé</h2>
                         </div>
                         <button
                             onClick={showModal}
@@ -417,11 +360,7 @@ const TourDetailsAdmin = () => {
                             Thêm vé
                         </button>
                         <Modal
-                            title={
-                                <p className="px-5 pb-2 pt-4 text-[18px]">
-                                    Thêm vé
-                                </p>
-                            }
+                            title={<p className="px-5 pb-2 pt-4 text-[18px]">Thêm vé</p>}
                             open={isAddTicketModalOpen}
                             onCancel={handleCancel}
                             width={"60%"}
@@ -462,10 +401,7 @@ const TourDetailsAdmin = () => {
                     </div>
                     <div className="space-y-4 mt-4 pl-5">
                         {data.tickets.map((ticket, index) => (
-                            <TicketCard
-                                key={index}
-                                ticket={ticket}
-                            ></TicketCard>
+                            <TicketCard key={index} ticket={ticket}></TicketCard>
                         ))}
                     </div>
                 </div>

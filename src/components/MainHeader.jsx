@@ -154,7 +154,7 @@ export const MainHeader = () => {
                             Địa điểm muốn đến
                             {openCities && (
                                 <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 w-screen">
-                                    <div className="max-w-screen-xl mx-auto border bg-white">
+                                    <div className="max-w-screen-2xl mx-auto border bg-white">
                                         <div className="grid grid-cols-4 p-4 gap-x-4 mt-1 gap-y-6">
                                             {cityOptions.map((city, index) => (
                                                 <Link
